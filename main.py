@@ -2,6 +2,7 @@ import os
 import discord
 from discord import app_commands
 import aiohttp
+from keep_alive import keep_alive
 
 if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
@@ -45,4 +46,5 @@ async def mcstart(interaction: discord.Interaction):
 			else:
 				await interaction.followup.send(f"起動のリクエストに失敗しました。( エラーコード **{response.status}** )")
 
+keep_alive()
 client.run(token)
