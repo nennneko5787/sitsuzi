@@ -11,7 +11,7 @@ if os.path.isfile(".env") == True:
 token = os.getenv('discord')	#Your TOKEN
 
 intents = discord.Intents.all()
-client = discord.Client(intents=intents)	#接続に必要なオブジェクトを生成
+client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 
