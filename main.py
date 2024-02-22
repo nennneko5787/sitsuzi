@@ -29,7 +29,7 @@ async def ping(interaction: discord.Interaction):
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
 	await interaction.response.defer()
-	url = 'https://pterodactyl.file.properties/api/client/servers/03eaa96e/command'
+	url = 'https://panel.fps.ms/api/client/servers/03eaa96e/command'
 	headers = {
 		'Accept': 'application/json',
 		'Content-Type': 'application/json',
