@@ -11,6 +11,14 @@ from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 import traceback
 
+import math 
+
+def int_len(n):
+    if n = 0:
+        return 1
+    else:
+        return int(math.log10(num) + 1)
+
 if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
 	load_dotenv(verbose=True)
@@ -38,7 +46,7 @@ async def ping(interaction: discord.Interaction, formura: str):
 	try:
 		answer = eval(formura)
 		siki = formura.replace('*','\\*')
-		await interaction.response.send_message(f"{siki} = **{answer}**")
+		await interaction.response.send_message(f"{siki} = **{int_len(answer)}**")
 	except:
 		traceback_info = traceback.format_exc()
 		await interaction.rensponse.send_message(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
