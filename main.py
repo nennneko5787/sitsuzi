@@ -33,6 +33,16 @@ async def on_ready():
 async def ping(interaction: discord.Interaction):
 	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
 
+@tree.command(name="eval", description="計算式を書くと計算してくれます")
+async def ping(interaction: discord.Interaction, formura: str):
+	try:
+		await interaction.response.send_message(f"{formura} = **{eval(formura)}")
+	except Exception as e:
+		traceback_info = traceback.format_exc()
+		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
+
+		
+
 """
 def crop_center(image, width, height):
 	# 画像を中央から指定した幅と高さに切り取る関数
