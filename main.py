@@ -228,6 +228,26 @@ async def on_button_click(interaction: discord.Interaction):
 			traceback_info = traceback.format_exc()
 			await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
+@tree.context_menu(name="「画像を展開」ボタンを削除")
+async def delete(interaction: discord.Interaction, message: discord.Message):
+	button = message.components[0]
+	custom_id, value = interaction.data["custom_id"].split(",")
+	if custom_id == "unpack":
+		channel_id, message_id = value.split("|")
+		channel = client.get_channel(int(channel_id))
+		try:
+			msg = await channel.fetch_message(int(message_id))
+			if msg.author == interaction.user:
+				await message.delete()
+				await interaction.response.send_message("削除しました。", ephemeral=True)
+			else:
+				await interaction.response.send_message("元メッセージの作者ではないので、「画像を展開」ボタンは消せません。", ephemeral=True)
+		except:
+			await message.delete()
+			await interaction.response.send_message("削除しました。", ephemeral=True)
+	else:
+		await interaction.response.send_message("そのメッセージに「画像を展開」ボタンはないみたいです", ephemeral=True)
+
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
 	await interaction.response.defer()
