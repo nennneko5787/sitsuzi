@@ -36,12 +36,11 @@ async def ping(interaction: discord.Interaction):
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
 async def ping(interaction: discord.Interaction, formura: str):
 	try:
-		await interaction.response.send_message(f"{formura} = **{eval(formura)}")
-	except Exception as e:
+		answer = eval(formura)
+		await interaction.response.send_message(f"{formura} = **{answer}**")
+	except:
 		traceback_info = traceback.format_exc()
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
-
-		
 
 """
 def crop_center(image, width, height):
