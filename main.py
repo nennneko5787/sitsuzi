@@ -230,8 +230,7 @@ async def on_button_click(interaction: discord.Interaction):
 
 @tree.context_menu(name="「画像を展開」ボタンを削除")
 async def delete(interaction: discord.Interaction, message: discord.Message):
-	button = message.components[0].children
-	await interaction.channel.send(button)
+	button = message.components[0].children[0]
 	custom_id, value = button.custom_id.split(",")
 	if custom_id == "unpack":
 		channel_id, message_id = value.split("|")
