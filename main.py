@@ -37,7 +37,7 @@ async def ping(interaction: discord.Interaction):
 async def ping(interaction: discord.Interaction, formura: str):
 	try:
 		answer = eval(formura)
-		await interaction.response.send_message(f"{formura.replace("*","\\*")} = **{answer}**")
+		await interaction.response.send_message(f"{formura.replace('*','\\*')} = **{answer}**")
 	except:
 		traceback_info = traceback.format_exc()
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
