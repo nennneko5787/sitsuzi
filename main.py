@@ -38,10 +38,10 @@ async def ping(interaction: discord.Interaction, formura: str):
 	try:
 		answer = eval(formura)
 		siki = formura.replace('*','\\*')
-		await interaction.response.send_message(f"{sik} = **{answer}**")
+		await interaction.response.send_message(f"{siki} = **{answer}**")
 	except:
 		traceback_info = traceback.format_exc()
-		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
+		await interaction.rensponse.send_message(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
 """
 def crop_center(image, width, height):
