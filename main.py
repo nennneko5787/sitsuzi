@@ -11,6 +11,9 @@ from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 import traceback
 from decimal import Decimal
+import google.generativeai as genai
+from google.generativeai import generative_models
+import functools
 
 import sys
 sys.set_int_max_str_digits(0)
@@ -18,6 +21,42 @@ sys.set_int_max_str_digits(0)
 if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
 	load_dotenv(verbose=True)
+
+# Google Generative AI（Gemini API）のAPIキー設定
+genai.configure(api_key=os.environ.get("gemini"))
+
+# Set up the model
+generation_config = {
+  "temperature": 0.9,
+  "top_p": 1,
+  "top_k": 1,
+  "max_output_tokens": 2000,
+}
+
+safety_settings = [
+  {
+    "category": "HARM_CATEGORY_HARASSMENT",
+    "threshold": "BLOCK_NONE"
+  },
+  {
+    "category": "HARM_CATEGORY_HATE_SPEECH",
+    "threshold": "BLOCK_NONE"
+  },
+  {
+    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+    "threshold": "BLOCK_NONE"
+  },
+  {
+    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+    "threshold": "BLOCK_NONE"
+  },
+]
+
+model = genai.GenerativeModel(model_name="gemini-pro",
+                              generation_config=generation_config,
+                              safety_settings=safety_settings)
+# チャットを開始
+chat = model.start_chat(history=[])
 
 token = os.getenv('discord')
 
@@ -32,6 +71,43 @@ async def on_ready():
 	print("Ready!")
 	server_stat.start()
 	await tree.sync()	#スラッシュコマンドを同期
+
+@client.event
+async def on_message(message):
+	global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
+					"名前は、「天海 さき」と言います。"\
+					"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
+					"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
+					"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
+					"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
+					"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
+					"あなたは明るく好きなものに執着するタイプの人間です。"\
+					f"私の名前は{message.author.display_name}です。私はあなたに「{message.content}」と話しました。あなたはメイド風に返答しなければなりません。人と話すときと同じように返答してください。文法的に誤りのある文は認められません。"\
+					"返答にはMarkdown記法を使うことができます。"
+	if message.channel.id == 1210867877641457704:
+		if message.author.bot == False:
+			# タイピングしてみる
+			async with message.channel.typing():
+				msg = await message.reply("私は今返答を考えているところです...")
+			try:
+				# プロンプト
+				prompt = global_prom_1
+
+				# イベントループを取得
+				loop = asyncio.get_event_loop()
+
+				# Gemini APIを使って応答を生成 (非同期で実行)
+				partial_func = functools.partial(chat.send_message, prompt, stream=True)
+				response = await loop.run_in_executor(None, partial_func)
+
+				text = ""
+				for chunk in response:
+					text = text + chunk.text
+					await msg.edit(content=text)
+			except:
+				traceback_info = traceback.format_exc()
+				text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+				await msg.edit(content=text)
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
