@@ -14,6 +14,7 @@ from decimal import Decimal
 import google.generativeai as genai
 from google.generativeai import generative_models
 import functools
+from collections import defaultdict
 
 import sys
 sys.set_int_max_str_digits(0)
@@ -55,8 +56,8 @@ safety_settings = [
 model = genai.GenerativeModel(model_name="gemini-pro",
                               generation_config=generation_config,
                               safety_settings=safety_settings)
-# チャットを開始
-chat = model.start_chat(history=[])
+
+chat_rooms = defaultdict(lambda: None)
 
 token = os.getenv('discord')
 
@@ -86,6 +87,9 @@ async def on_message(message):
 					"返答にはMarkdown記法を使うことができます。"
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
+			if chat_rooms[message.author.id] == None:
+				# チャットを開始
+				chat_rooms[message.author.id] = model.start_chat(history=[])
 			# タイピングしてみる
 			async with message.channel.typing():
 				msg = await message.reply("私は今返答を考えているところです...")
@@ -97,7 +101,7 @@ async def on_message(message):
 				loop = asyncio.get_event_loop()
 
 				# Gemini APIを使って応答を生成 (非同期で実行)
-				partial_func = functools.partial(chat.send_message, prompt, stream=True)
+				partial_func = functools.partial(chat_rooms[message.author.id].send_message, prompt, stream=True)
 				response = await loop.run_in_executor(None, partial_func)
 
 				text = ""
@@ -110,9 +114,14 @@ async def on_message(message):
 				await msg.edit(content=text)
 
 @tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
-async def deletemsghistory(interaction: discord.Interaction):
-	chat.history = None
-	await interaction.response.send_message("AIとの会話履歴を削除しました。")
+async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
+	if user == None:
+		user = interaction.user
+	if chat_rooms[user.author.id] != None:
+		chat_rooms[user.author.id].history = None
+		await interaction.response.send_message("AIとの会話履歴を削除しました。")
+	else:
+		await interaction.response.send_message("あなたはまだ一度もAIと会話していないようです。", ephemeral=True)
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
