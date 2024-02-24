@@ -83,7 +83,8 @@ async def on_message(message):
 					"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
 					"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
 					"あなたは明るく好きなものに執着するタイプの人間です。"\
-					f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に返答しなければなりません。人と話すときと同じように返答してください。文法的に誤りのある文は認められません。"\
+					"あなたはプログラミングが得意です。プログラミングのことならなんでも回答できます。"\
+					f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
 					"返答にはMarkdown記法を使うことができます。"
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
@@ -117,8 +118,13 @@ async def on_message(message):
 async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
 	if user == None:
 		user = interaction.user
-	if chat_rooms[user.author.id] != None:
-		chat_rooms[user.author.id].history = None
+	else:
+		if user != interaction.user:
+			if interaction.user.guild_permissions.administrator == False:
+				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
+				return
+	if chat_rooms[user.id] != None:
+		chat_rooms[user.id].history = None
 		await interaction.response.send_message("AIとの会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度もAIと会話していないようです。", ephemeral=True)
