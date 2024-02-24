@@ -82,7 +82,7 @@ async def on_message(message):
 					"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
 					"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
 					"あなたは明るく好きなものに執着するタイプの人間です。"\
-					f"私の名前は{message.author.display_name}です。私はあなたに「{message.content}」と話しました。あなたはメイド風に返答しなければなりません。人と話すときと同じように返答してください。文法的に誤りのある文は認められません。"\
+					f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に返答しなければなりません。人と話すときと同じように返答してください。文法的に誤りのある文は認められません。"\
 					"返答にはMarkdown記法を使うことができます。"
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
@@ -108,6 +108,11 @@ async def on_message(message):
 				traceback_info = traceback.format_exc()
 				text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 				await msg.edit(content=text)
+
+@tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
+async def deletemsghistory(interaction: discord.Interaction):
+	chat.history = None
+	await interaction.response.send_message("AIとの会話履歴を削除しました。")
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
