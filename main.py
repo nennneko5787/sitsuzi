@@ -10,6 +10,7 @@ import io
 from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 import traceback
+from decimal import Decimal
 
 import sys
 sys.set_int_max_str_digits(0)
