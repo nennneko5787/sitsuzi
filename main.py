@@ -10,6 +10,10 @@ import io
 from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 import traceback
+from decimal import Decimal
+
+import sys
+sys.set_int_max_str_digits(0)
 
 if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
@@ -32,6 +36,17 @@ async def on_ready():
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
 	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
+
+@tree.command(name="eval", description="計算式を書くと計算してくれます")
+async def ping(interaction: discord.Interaction, formura: str):
+	await interaction.response.defer()
+	try:
+		answer = eval(formura)
+		siki = formura.replace('*','\\*')
+		await interaction.followup.send(f"{siki} = **{answer}**")
+	except:
+		traceback_info = traceback.format_exc()
+		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
 """
 def crop_center(image, width, height):
