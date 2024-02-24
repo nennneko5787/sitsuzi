@@ -19,7 +19,7 @@ if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
 	load_dotenv(verbose=True)
 
-token = os.getenv('discord')	#Your TOKEN
+token = os.getenv('discord')
 
 intents = discord.Intents.all()
 client = discord.Client(intents=intents)
