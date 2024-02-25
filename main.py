@@ -21,7 +21,7 @@ from twikit.twikit_async import Client
 from misskey import Misskey
 import functools
 import datetime
-from zoneinfo import Zoneinfo
+from zoneinfo import ZoneInfo
 
 import sys
 sys.set_int_max_str_digits(0)
