@@ -311,13 +311,14 @@ async def mcstart(interaction: discord.Interaction):
 			else:
 				await interaction.followup.send(f"起動のリクエストに失敗しました。( エラーコード **{response.status}** )")
 
-def generate_hiragana():
+# ひらがなを生成
+def generate_hiragana(c:int = 5):
 	hiragana_chars = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ']
-	return ''.join(random.choices(hiragana_chars, k=5))
+	return ''.join(random.choices(hiragana_chars, k=c))
 
 @tasks.loop(minutes=1)
 async def minute_random_five_hiragana():
-	hiragana = generate_hiragana()
+	hiragana = generate_hiragana(5)
 
 	async with aiohttp.ClientSession() as session:
 		webhook = Webhook.from_url('https://discord.com/api/webhooks/1211150967744106610/AccDAGe0Qrf33sTvqC6aL2ne_N1N9-cdQoF5JTsICHFiA0jsbSHnafK3bZlimZvE7ivW', session=session)
