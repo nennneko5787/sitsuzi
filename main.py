@@ -86,7 +86,7 @@ async def on_ready():
 			password=os.getenv("twitter_password")
 		)
 	except:
-		resp = client.http.get('https://twitter.com/i/api/2/notifications/all.json',headers=client._base_headers)
+		resp = twitter.http.get('https://twitter.com/i/api/2/notifications/all.json',headers=twitter._base_headers)
 		ch = client.get_channel(1211150798617313340)
 		ch.send(resp.headers.get('x-rate-limit-reset',0))
 	minute_random_five_hiragana.start()
