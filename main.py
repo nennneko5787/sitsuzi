@@ -331,6 +331,7 @@ def generate_hiragana(c:int = 5):
 # 1分ごとにひらがなをつぶやく
 @tasks.loop(minutes=1)
 async def minute_random_five_hiragana():
+	global twitxt
 	hiragana = generate_hiragana(5)
 
 	async with aiohttp.ClientSession() as session:
@@ -344,6 +345,7 @@ async def minute_random_five_hiragana():
 
 @tasks.loop(minutes=10)
 async def hour():
+	global twitxt
 	await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
 
 @tasks.loop(minutes=20)
