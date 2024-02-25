@@ -76,7 +76,7 @@ proxies = {
     'https://': 'http://65.109.152.88:8888'
 }
 
-twitter = Client('ja-JP', proxies=proxies)
+twitter = Client('ja-JP', proxies=proxies, timeout=300)
 twitxt = ""
 
 misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
@@ -361,10 +361,11 @@ async def hour():
 async def spla3():
 	current_time = datetime.datetime.now()
 	if current_time.minute == 0 and current_time.hour in [9, 11, 13, 15, 17, 19, 21, 23, 1, 3, 5, 7]:
-		await send_regular_embed(current_time)
-		await send_bankara_open_embed(current_time)
-		await send_bankara_challenge_embed(current_time)
-		await send_x_embed(current_time)
+		pass
+	await send_regular_embed(current_time)
+	await send_bankara_open_embed(current_time)
+	await send_bankara_challenge_embed(current_time)
+	await send_x_embed(current_time)
 
 async def send_regular_embed(current_time):
 	# ナワバリバトル
@@ -377,9 +378,9 @@ async def send_regular_embed(current_time):
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/regular/now")
-		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
+		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/regular/now")
-		battle_stage2_embed.set_image(url=battle['results'][1]['stages'][1]['image'])
+		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
@@ -400,9 +401,9 @@ async def send_fest_embed(current_time):
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest/now")
-		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
+		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest/now")
-		battle_stage2_embed.set_image(url=battle['results'][1]['stages'][1]['image'])
+		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
@@ -419,9 +420,9 @@ async def send_fest_challenge_embed(current_time):
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest-challenge/now")
-		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
+		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest-challenge/now")
-		battle_stage2_embed.set_image(url=battle['results'][1]['stages'][1]['image'])
+		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
@@ -434,13 +435,13 @@ async def send_bankara_open_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-open/now", color=discord.Colour.green(), timestamp=current_time)
+		battle_embed = discord.Embed(title=f"バンカラマッチ(オープン)({battle['results'][0]['rule']['name']})のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-open/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-open/now")
-		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
+		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-open/now")
-		battle_stage2_embed.set_image(url=battle['results'][1]['stages'][1]['image'])
+		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
@@ -453,13 +454,13 @@ async def send_bankara_challenge_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-challenge/now", color=discord.Colour.green(), timestamp=current_time)
+		battle_embed = discord.Embed(title=f"バンカラマッチ(チャレンジ)({battle['results'][0]['rule']['name']})のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-challenge/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-challenge/now")
-		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
+		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-challenge/now")
-		battle_stage2_embed.set_image(url=battle['results'][1]['stages'][1]['image'])
+		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
@@ -472,13 +473,13 @@ async def send_x_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/x/now", color=discord.Colour.green(), timestamp=current_time)
+		battle_embed = discord.Embed(title=f"Xマッチ({battle['results'][0]['rule']['name']})のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/x/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
-		battle_stage2_embed.set_image(url=battle['results'][1]['stages'][1]['image'])
+		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
