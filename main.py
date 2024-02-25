@@ -21,6 +21,7 @@ from twikit.twikit_async import Client
 from misskey import Misskey
 import functools
 import datetime
+from zoneinfo import Zoneinfo
 
 import sys
 sys.set_int_max_str_digits(0)
@@ -353,7 +354,9 @@ async def hour():
 	global twitxt
 	try:
 		await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
-
+	except:
+		pass
+	try:
 		loop = asyncio.get_event_loop()
 		partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
 		await loop.run_in_executor(None, partial_function)
@@ -362,7 +365,7 @@ async def hour():
 
 @tasks.loop(minutes=1)
 async def spla3():
-	current_time = datetime.datetime.now()
+	current_time = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
 	if current_time.minute == 0 and current_time.hour in [9, 11, 13, 15, 17, 19, 21, 23, 1, 3, 5, 7]:
 		await send_regular_embed(current_time)
 		await send_bankara_open_embed(current_time)
