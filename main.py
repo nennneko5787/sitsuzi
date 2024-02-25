@@ -70,7 +70,12 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
-twitter = Client('ja-JP')
+proxies = {
+    'http://': 'http://212.42.116.161:8080',
+    'https://': 'http://65.109.152.88:8888'
+}
+
+twitter = Client('ja-JP', proxies=proxies)
 
 misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
 
@@ -86,7 +91,7 @@ async def on_ready():
 			password=os.getenv("twitter_password")
 		)
 	except:
-		resp = twitter.http.get('https://twitter.com/i/api/2/notifications/all.json',headers=twitter._base_headers)
+		resp = await twitter.http.get('https://twitter.com/i/api/2/notifications/all.json',headers=twitter._base_headers)
 		ch = client.get_channel(1211150798617313340)
 		ch.send(resp.headers.get('x-rate-limit-reset',0))
 	minute_random_five_hiragana.start()
