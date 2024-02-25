@@ -364,11 +364,10 @@ async def hour():
 async def spla3():
 	current_time = datetime.datetime.now()
 	if current_time.minute == 0 and current_time.hour in [9, 11, 13, 15, 17, 19, 21, 23, 1, 3, 5, 7]:
-		pass
-	await send_regular_embed(current_time)
-	await send_bankara_open_embed(current_time)
-	await send_bankara_challenge_embed(current_time)
-	await send_x_embed(current_time)
+		await send_regular_embed(current_time)
+		await send_bankara_open_embed(current_time)
+		await send_bankara_challenge_embed(current_time)
+		await send_x_embed(current_time)
 
 async def send_regular_embed(current_time):
 	# ナワバリバトル
