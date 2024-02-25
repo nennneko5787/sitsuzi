@@ -1,5 +1,6 @@
 import os
 import discord
+from discord import Webhook
 from discord import app_commands
 import aiohttp
 from keep_alive import keep_alive
@@ -16,6 +17,9 @@ from google.generativeai import generative_models
 import functools
 from collections import defaultdict
 import random
+from twikit.twikit_async import Client
+from misskey import Misskey
+import functools
 
 import sys
 sys.set_int_max_str_digits(0)
@@ -66,12 +70,21 @@ intents = discord.Intents.all()
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
+twitter = Client('ja-JP')
+
+misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
 
 # 起動時に動作する処理
 @client.event
 async def on_ready():
 	print("Ready!")
 	server_stat.start()
+	await twitter.login(
+		auth_info_1=os.getenv("twitter_username"),
+		auth_info_2=os.getenv("twitter_email"),
+		password=os.getenv("twitter_password")
+	)
+	minute_random_five_hiragana.start()
 	await tree.sync()	#スラッシュコマンドを同期
 
 @client.event
@@ -297,6 +310,23 @@ async def mcstart(interaction: discord.Interaction):
 				await interaction.followup.send("起動をリクエストしました。起動まで時間がかかるので、しばらくお待ち下さい...")
 			else:
 				await interaction.followup.send(f"起動のリクエストに失敗しました。( エラーコード **{response.status}** )")
+
+def generate_hiragana():
+	hiragana_chars = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け', 'こ', 'さ', 'し', 'す', 'せ', 'そ', 'た', 'ち', 'つ', 'て', 'と', 'な', 'に', 'ぬ', 'ね', 'の', 'は', 'ひ', 'ふ', 'へ', 'ほ', 'ま', 'み', 'む', 'め', 'も', 'や', 'ゆ', 'よ', 'ら', 'り', 'る', 'れ', 'ろ', 'わ', 'を', 'ん', 'ぁ', 'ぃ', 'ぅ', 'ぇ', 'ぉ', 'っ', 'ゃ', 'ゅ', 'ょ']
+	return ''.join(random.choices(hiragana_chars, k=5))
+
+@tasks.loop(minutes=1)
+async def minute_random_five_hiragana():
+	hiragana = generate_hiragana()
+
+	async with aiohttp.ClientSession() as session:
+		webhook = Webhook.from_url('https://discord.com/api/webhooks/1211150967744106610/AccDAGe0Qrf33sTvqC6aL2ne_N1N9-cdQoF5JTsICHFiA0jsbSHnafK3bZlimZvE7ivW', session=session)
+		await webhook.send(hiragana, username='1分ごとにランダムなひらがな5文字をつぶやくボット')
+
+	await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
+	loop = asyncio.get_event_loop()
+	partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
+	await loop.run_in_executor(None, partial_function)
 
 @tasks.loop(minutes=20)
 async def server_stat():

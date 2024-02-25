@@ -2,3 +2,5 @@ discord.py
 Flask
 pillow
 google-generativeai
+twikit
+Misskey.py
