@@ -157,6 +157,13 @@ async def on_message(message):
 				print(matches)
 				title = matches[0]
 
+				# 正規表現パターンをコンパイル
+				pattern = re.compile(r'<a href=".*?" target="_self" title="ボケ詳細">(.*)</a>')
+				# マッチしたすべての部分をリストとして取得
+				matches = pattern.findall(r)
+				print(matches)
+				date = matches[0]
+
 				async with aiohttp.ClientSession() as session:
 					async with session.get(picture) as response:
 						if response.status == 200:
@@ -167,7 +174,7 @@ async def on_message(message):
 							# MIMEタイプから拡張子を取得します
 							extension = mimetypes.guess_extension(content_type)
 							file = discord.File(image_stream, filename=f"bokete{extension}")
-							await message.reply(f"# {title}\n{odai}\nID: {random_int}", file=file)
+							await message.reply(f"# {title}\n{odai}\nこのボケは {date} に投稿されました\nID: {random_int}", file=file)
 
 
 @tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
