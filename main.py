@@ -332,21 +332,23 @@ def generate_hiragana(c:int = 5):
 @tasks.loop(minutes=1)
 async def minute_random_five_hiragana():
 	global twitxt
-	hiragana = generate_hiragana(5)
+	try:
+		hiragana = generate_hiragana(5)
 
-	async with aiohttp.ClientSession() as session:
-		webhook = Webhook.from_url('https://discord.com/api/webhooks/1211150967744106610/AccDAGe0Qrf33sTvqC6aL2ne_N1N9-cdQoF5JTsICHFiA0jsbSHnafK3bZlimZvE7ivW', session=session)
-		await webhook.send(hiragana, username='1分ごとにランダムなひらがな5文字をつぶやくボット')
+		async with aiohttp.ClientSession() as session:
+			webhook = Webhook.from_url('https://discord.com/api/webhooks/1211150967744106610/AccDAGe0Qrf33sTvqC6aL2ne_N1N9-cdQoF5JTsICHFiA0jsbSHnafK3bZlimZvE7ivW', session=session)
+			await webhook.send(hiragana, username='1分ごとにランダムなひらがな5文字をつぶやくボット')
 
-	twitxt = f"{twitxt}\n{hiragana}"
-	loop = asyncio.get_event_loop()
-	partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
-	await loop.run_in_executor(None, partial_function)
+		twitxt = f"{twitxt}\n{hiragana}"
+		loop = asyncio.get_event_loop()
+		partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
+		await loop.run_in_executor(None, partial_function)
 
 @tasks.loop(minutes=10)
 async def hour():
 	global twitxt
-	await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
+	try:
+		await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
 
 @tasks.loop(minutes=20)
 async def server_stat():
