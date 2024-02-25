@@ -340,9 +340,6 @@ async def minute_random_five_hiragana():
 			await webhook.send(hiragana, username='1分ごとにランダムなひらがな5文字をつぶやくボット')
 
 		twitxt = f"{twitxt}\n{hiragana}"
-		loop = asyncio.get_event_loop()
-		partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
-		await loop.run_in_executor(None, partial_function)
 	except:
 		pass
 
@@ -351,6 +348,10 @@ async def hour():
 	global twitxt
 	try:
 		await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
+
+		loop = asyncio.get_event_loop()
+		partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
+		await loop.run_in_executor(None, partial_function)
 	except:
 		pass
 
