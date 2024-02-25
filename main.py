@@ -75,7 +75,8 @@ proxies = {
     'https://': 'http://65.109.152.88:8888'
 }
 
-# twitter = Client('ja-JP', proxies=proxies)
+twitter = Client('ja-JP', proxies=proxies)
+twitxt = ""
 
 misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
 
@@ -84,7 +85,6 @@ misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
 async def on_ready():
 	print("Ready!")
 	server_stat.start()
-	"""
 	try:
 		await twitter.login(
 			auth_info_1=os.getenv("twitter_username"),
@@ -94,9 +94,9 @@ async def on_ready():
 	except:
 		resp = await twitter.http.get('https://twitter.com/i/api/2/notifications/all.json',headers=twitter._base_headers)
 		ch = client.get_channel(1211150798617313340)
-		ch.send(resp.headers.get('x-rate-limit-reset',0))
-	"""
+		ch.send(f"Twitter Rate Limit: {resp.headers.get('x-rate-limit-reset',0)}")
 	minute_random_five_hiragana.start()
+	hour.start()
 	await tree.sync()	#スラッシュコマンドを同期
 
 @client.event
@@ -337,10 +337,14 @@ async def minute_random_five_hiragana():
 		webhook = Webhook.from_url('https://discord.com/api/webhooks/1211150967744106610/AccDAGe0Qrf33sTvqC6aL2ne_N1N9-cdQoF5JTsICHFiA0jsbSHnafK3bZlimZvE7ivW', session=session)
 		await webhook.send(hiragana, username='1分ごとにランダムなひらがな5文字をつぶやくボット')
 
-	# await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
+	twitxt = f"{twitxt}\n{hiragana}"
 	loop = asyncio.get_event_loop()
 	partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
 	await loop.run_in_executor(None, partial_function)
+
+@tasks.loop(minutes=10)
+async def hour():
+	await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
 
 @tasks.loop(minutes=20)
 async def server_stat():
