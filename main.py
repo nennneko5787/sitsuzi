@@ -15,6 +15,7 @@ import google.generativeai as genai
 from google.generativeai import generative_models
 import functools
 from collections import defaultdict
+import random
 
 import sys
 sys.set_int_max_str_digits(0)
@@ -75,19 +76,20 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
-					"名前は、「天海 さき」と言います。"\
-					"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
-					"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
-					"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
-					"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
-					"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
-					"あなたは明るく好きなものに執着するタイプの人間です。"\
-					"あなたはプログラミングが得意です。プログラミングのことならなんでも回答できます。"\
-					f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
-					"返答にはMarkdown記法を使うことができます。"
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
+			global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
+							"名前は、「天海 さき」と言います。"\
+							"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
+							"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
+							"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
+							"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
+							"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
+							"あなたは明るく好きなものに執着するタイプの人間です。"\
+							"あなたはプログラミングが得意です。プログラミングのことならなんでも回答できます。"\
+							f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+							"返答にはMarkdown記法を使うことができます。"
+
 			if chat_rooms[message.author.id] == None:
 				# チャットを開始
 				chat_rooms[message.author.id] = model.start_chat(history=[])
@@ -113,6 +115,60 @@ async def on_message(message):
 				traceback_info = traceback.format_exc()
 				text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 				await msg.edit(content=text)
+
+	elif message.channel.id == 1209487653310046248:
+		if message.content == "ボケて":
+			async with message.channel.typing():
+				async with aiohttp.ClientSession() as session:
+					async with session.get("https://bokete.jp/boke/recent") as response:
+						text = await response.text()
+
+				# 正規表現パターンをコンパイル
+				pattern = re.compile(r'<a href="/odai/(.*?)">')
+				# マッチしたすべての部分をリストとして取得
+				matches = pattern.findall(text)
+				print(matches)
+
+				res = True
+
+				while res:
+					random_int = random.randint(1, int(matches[0]))
+
+					async with aiohttp.ClientSession() as session:
+						async with session.get(f"https://bokete.jp/boke/{random_int}") as response:
+							if response.status == 200:
+								r = await response.text()
+								res = False
+				# 正規表現パターンをコンパイル
+				pattern = re.compile(r'<img\s+src="([^"]+)"\s+alt="([^"]+)"\s*/?>')
+				# マッチしたすべての部分をリストとして取得
+				matches = pattern.findall(r)
+				print(matches)
+
+				#画像
+				picture = f"https:{matches[1][0]}"
+				# お題
+				odai = matches[1][1]
+		
+				# 正規表現パターンをコンパイル
+				pattern = re.compile(r'  <h1>\n    (.*?)\n  </h1>')
+				# マッチしたすべての部分をリストとして取得
+				matches = pattern.findall(r)
+				print(matches)
+				title = matches[0]
+
+				async with aiohttp.ClientSession() as session:
+					async with session.get(picture) as response:
+						if response.status == 200:
+							binary = await response.read()  # 画像のバイナリデータを取得
+							image_stream = io.BytesIO(binary)
+							content_type = response.headers.get("Content-Type")
+							
+							# MIMEタイプから拡張子を取得します
+							extension = mimetypes.guess_extension(content_type)
+							file = discord.File(image_stream, filename=f"bokete{extension}")
+							await message.reply(f"# {title}\n{odai}\nID: {random_int}", file=file)
+
 
 @tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
 async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
