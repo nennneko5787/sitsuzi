@@ -362,6 +362,7 @@ async def hour():
 		await loop.run_in_executor(None, partial_function)
 	except:
 		pass
+	twitxt = ""
 
 @tasks.loop(minutes=1)
 async def spla3():
