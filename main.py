@@ -373,7 +373,7 @@ async def send_regular_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/regular/now", color=discord.Colour.green())
+		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/regular/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/regular/now")
@@ -396,7 +396,7 @@ async def send_fest_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == True:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/fest/now", color=discord.Colour.green())
+		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/fest/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest/now")
@@ -415,7 +415,7 @@ async def send_fest_challenge_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == True:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/fest-challenge/now", color=discord.Colour.green())
+		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/fest-challenge/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest-challenge/now")
@@ -434,7 +434,7 @@ async def send_bankara_open_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-open/now", color=discord.Colour.green())
+		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-open/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-open/now")
@@ -453,7 +453,7 @@ async def send_bankara_challenge_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-challenge/now", color=discord.Colour.green())
+		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-challenge/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-challenge/now")
@@ -472,7 +472,7 @@ async def send_x_embed(current_time):
 			if response.status == 200:
 				battle = await response.json()
 	if battle['results'][0]["is_fest"] == False:
-		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/x/now", color=discord.Colour.green())
+		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/x/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
