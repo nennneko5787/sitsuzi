@@ -343,12 +343,16 @@ async def minute_random_five_hiragana():
 		loop = asyncio.get_event_loop()
 		partial_function = functools.partial(misskey.notes_create,text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{hiragana}")
 		await loop.run_in_executor(None, partial_function)
+	except:
+		pass
 
 @tasks.loop(minutes=10)
 async def hour():
 	global twitxt
 	try:
 		await twitter.create_tweet(text=f"#1分ごとにランダムなひらがな5文字をつぶやく\n{twitxt}")
+	except:
+		pass
 
 @tasks.loop(minutes=20)
 async def server_stat():
