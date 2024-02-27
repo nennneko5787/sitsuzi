@@ -8,7 +8,6 @@ from discord.ext import tasks
 import re
 import asyncio
 import io
-from PIL import Image, ImageDraw, ImageFont
 import mimetypes
 import traceback
 from decimal import Decimal
