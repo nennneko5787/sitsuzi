@@ -415,7 +415,7 @@ async def send_regular_embed(current_time):
 		return
 
 async def send_fest_embed(current_time):
-	# ナワバリバトル
+	# フェスマッチ(オープン)
 	async with aiohttp.ClientSession() as session:
 		async with session.get("https://spla3.yuu26.com/api/fest/now") as response:
 			if response.status == 200:
@@ -434,7 +434,7 @@ async def send_fest_embed(current_time):
 		await channel.send(embeds=[battle_embed, battle_stage1_embed, battle_stage2_embed])
 
 async def send_fest_challenge_embed(current_time):
-	# ナワバリバトル
+	# フェスマッチ(チャレンジ)
 	async with aiohttp.ClientSession() as session:
 		async with session.get("https://spla3.yuu26.com/api/fest-challenge/now") as response:
 			if response.status == 200:
@@ -453,7 +453,7 @@ async def send_fest_challenge_embed(current_time):
 		await channel.send(embeds=[battle_embed, battle_stage1_embed, battle_stage2_embed])
 
 async def send_bankara_open_embed(current_time):
-	# ナワバリバトル
+	# バンカラマッチ(オープン)
 	async with aiohttp.ClientSession() as session:
 		async with session.get("https://spla3.yuu26.com/api/bankara-open/now") as response:
 			if response.status == 200:
@@ -472,7 +472,7 @@ async def send_bankara_open_embed(current_time):
 		await channel.send(embeds=[battle_embed, battle_stage1_embed, battle_stage2_embed])
 
 async def send_bankara_challenge_embed(current_time):
-	# ナワバリバトル
+	# バンカラマッチ(チャレンジ)
 	async with aiohttp.ClientSession() as session:
 		async with session.get("https://spla3.yuu26.com/api/bankara-challenge/now") as response:
 			if response.status == 200:
@@ -491,7 +491,7 @@ async def send_bankara_challenge_embed(current_time):
 		await channel.send(embeds=[battle_embed, battle_stage1_embed, battle_stage2_embed])
 
 async def send_x_embed(current_time):
-	# ナワバリバトル
+	# Xマッチ
 	async with aiohttp.ClientSession() as session:
 		async with session.get("https://spla3.yuu26.com/api/x/now") as response:
 			if response.status == 200:
@@ -501,7 +501,7 @@ async def send_x_embed(current_time):
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
 		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
-		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
+		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
 		battle_stage2_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 
