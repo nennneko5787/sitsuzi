@@ -72,8 +72,8 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 proxies = {
-    'http://': 'http://212.42.116.161:8080',
-    'https://': 'http://65.109.152.88:8888'
+    'http://': 'http://36.94.35.225:8080',
+    'https://': 'http://140.238.247.9:8100'
 }
 
 twitter = Client('ja-JP', proxies=proxies, timeout=300)
@@ -237,76 +237,94 @@ async def ping(interaction: discord.Interaction, formura: str):
 		traceback_info = traceback.format_exc()
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
-"""
-def crop_center(image, width, height):
-	# 画像を中央から指定した幅と高さに切り取る関数
-	img_width, img_height = image.size
-	
-	# 画像が指定した幅と高さよりも小さい場合は拡大する
-	if img_width < width or img_height < height:
-		max_dimension = max(width, height)
-		resize_ratio = max_dimension / max(img_width, img_height)
-		new_width = int(img_width * resize_ratio)
-		new_height = int(img_height * resize_ratio)
-		image = image.resize((new_width, new_height), Image.LANCZOS)
-	
-	# 中央から指定したサイズで切り取る
-	left = max(0, (image.width - width) / 2)
-	top = max(0, (image.height - height) / 2)
-	right = min(image.width, left + width)
-	bottom = min(image.height, top + height)
-	return image.crop((left, top, right, bottom))
+class ReportMessage(discord.ui.Modal, title='メッセージの通報'):
+	feedback = discord.ui.TextInput(
+		label='通報する理由',
+		style=discord.TextStyle.long,
+		placeholder='できる詳しく書いてください。',
+		required=True,
+		max_length=300,
+	)
 
+	def __init__(self, message: discord.Message):
+		self.message = message
 
-@tree.command(name="smash", description="スマブラ風の画像を生成")
-async def ping(interaction: discord.Interaction, name: str, attachment: discord.Attachment):
-	await interaction.response.defer()
-	print("生成中")
-	# 添付ファイルから画像を読み込む
-	file_content = await attachment.read()
-	image = Image.open(io.BytesIO(file_content))
-	image = crop_center(image, 1200, 720)
+	async def on_submit(self, interaction: discord.Interaction):
+		embed = discord.Embed(title="📢メッセージの通報", description="", timestamp=datetime.datetime.now())
+		embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
+		embed.add_field(name="ステータス", value="❌まだ対処されていません")
+		embed.add_field(name="通報した人", value=interaction.user.mention)
+		embed.add_field(name="該当メッセージ", value=self.message.jump_url)
+		embed.add_field(name="メッセージの内容", value=self.message.clean_content)
+		embed.add_field(name="該当ユーザー", value=self.message.author.mention)
+		embed.add_field(name="通報する理由", value=self.feedback.value)
+		button = discord.ui.Button(label="通報されたメッセージを削除",style=discord.ButtonStyle.primary,custom_id=f"reported_message_dm|{interaction.user.id}")
+		view = discord.ui.View()
+		view.add_item(button)
+		await interaction.guild.get_channel(1211962072074559588).send(embed=embed, view=view)
+		await interaction.response.send_message(f'メッセージを通報しました。ご協力感謝します。', ephemeral=True)
 
-	# brush_l.png を読み込む
-	brush_image = Image.open("brush_l.png")
+	async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
+		await interaction.response.send_message(f'エラーが発生しました。以下のログとと併せて <@1048448686914551879> に報告してください。\n```\n{error.__traceback__}\n```', ephemeral=True)
 
-	# brush_l.png を image 上に合成する
-	image.paste(brush_image, (0, 0), brush_image)
+		# Make sure we know what the error actually is
+		traceback.print_exception(type(error), error, error.__traceback__)
 
-	# フォントとサイズを指定する
-	font = ImageFont.truetype("NotoSansJP-ExtraBold.ttf", 120)
+@client.event
+async def on_interaction(inter:discord.Interaction):
+	try:
+		if inter.data['component_type'] == 2:
+			await on_button_click(inter)
+		"""
+		elif inter.data['component_type'] == 3:
+			await on_dropdown(inter)
+		"""
+	except KeyError:
+		pass
 
-	# 文字を描画するためのオブジェクトを作成する
-	draw = ImageDraw.Draw(image)
+class ReportedMessageProcess(discord.ui.Modal, title='通報されたメッセージを削除'):
+	feedback = discord.ui.TextInput(
+		label='さらなる処理の内容',
+		style=discord.TextStyle.long,
+		placeholder='メッセージを削除したあとに行う処理を書いてください。\n- 通報されたメッセージを削除しました。\n- 該当ユーザーを10分間タイムアウトしました。',
+		required=True,
+		max_length=300,
+	)
 
-	# 文字の描画位置
-	text_position = (0, 330)
-	# 文字の色
-	text_color = (253, 194, 4)
-	# 縁取りの色
-	outline_color = "black"
-	# 角度
-	angle = 45
+	def __init__(self, message: discord.Message, user: discord.User, rpmessage: discord.Message):
+		self.message = message
+		self.user = user
+		self.rpmessage = rpmessage
 
-	# 画像を角度だけ回転する
-	rotated_image = image.rotate(angle, expand=True)
+	async def on_submit(self, interaction: discord.Interaction):
+		embed = discord.Embed(title="📢メッセージの通報", description="", timestamp=datetime.datetime.now())
+		embed.set_author(name=interaction.user.display_name, icon_url=interaction.user.display_avatar.url)
+		embed.add_field(name="ステータス", value=f"✅処理されました。\n{self.feedback.value}")
+		embed.add_field(name="該当メッセージ", value=self.rpmessage.jump_url)
+		embed.add_field(name="メッセージの内容", value=self.rpmessage.clean_content)
+		embed.add_field(name="該当ユーザー", value=self.rpmessage.author.mention)
+		if self.user.dm_channel == None:
+			await self.user.create_dm()
+		await self.user.dm_channel.send(embed=embed)
+		await self.rpmessage.delete()
 
-	# 文字を描画する
-	draw = ImageDraw.Draw(rotated_image)
-	draw.text(text_position, "参戦!!", fill=text_color, font=font)
+	async def on_error(self, interaction: discord.Interaction, error: Exception) -> None:
+		await interaction.response.send_message(f'エラーが発生しました。以下のログとと併せて <@1048448686914551879> に報告してください。\n```\n{error.__traceback__}\n```', ephemeral=True)
 
-	# 画像をバイナリデータに変換する
-	img_byte_array = io.BytesIO()
-	rotated_image.save(img_byte_array, format="PNG")
-	img_byte_array.seek(0)
+		# Make sure we know what the error actually is
+		traceback.print_exception(type(error), error, error.__traceback__)
 
-	# 画像をDiscordのFileオブジェクトとして作成する
-	file = discord.File(img_byte_array, filename="output.png")
+## Button,Selectの処理
+async def on_button_click(interaction: discord.Interaction):
+	custom_id, user_id, channel_id, message_id = interaction.data["custom_id"].split("|")
+	if custom_id == "reported_message_dm":
+		user = client.get_user(int(user_id))
+		message = client.get_channel(int(channel_id)).fetch_message(int(message_id))
+		await interaction.response.send_modal(ReportedMessageProcess(interaction.message, user, message))
 
-	print(f"生成完了")
-	# メッセージに画像を添付して送信する
-	await interaction.followup.send(file=file)
-"""
+@tree.context_menu(name="メッセージを通報")
+async def reportmessage(interaction: discord.Interaction, message: discord.Message):
+	await interaction.response.send_modal(modal=ReportMessage(message))
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
@@ -378,7 +396,7 @@ async def send_regular_embed(current_time):
 	if battle['results'][0]["is_fest"] == False:
 		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/regular/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
-		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
+		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/regular/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/regular/now")
@@ -401,7 +419,7 @@ async def send_fest_embed(current_time):
 	if battle['results'][0]["is_fest"] == True:
 		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/fest/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
-		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
+		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest/now")
@@ -420,7 +438,7 @@ async def send_fest_challenge_embed(current_time):
 	if battle['results'][0]["is_fest"] == True:
 		battle_embed = discord.Embed(title=f"{battle['results'][0]['rule']['name']}のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/fest-challenge/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
-		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
+		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest-challenge/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/fest-challenge/now")
@@ -439,7 +457,7 @@ async def send_bankara_open_embed(current_time):
 	if battle['results'][0]["is_fest"] == False:
 		battle_embed = discord.Embed(title=f"バンカラマッチ(オープン)({battle['results'][0]['rule']['name']})のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-open/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
-		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
+		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-open/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-open/now")
@@ -458,7 +476,7 @@ async def send_bankara_challenge_embed(current_time):
 	if battle['results'][0]["is_fest"] == False:
 		battle_embed = discord.Embed(title=f"バンカラマッチ(チャレンジ)({battle['results'][0]['rule']['name']})のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/bankara-challenge/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
-		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
+		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-challenge/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][0]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/bankara-challenge/now")
@@ -477,7 +495,7 @@ async def send_x_embed(current_time):
 	if battle['results'][0]["is_fest"] == False:
 		battle_embed = discord.Embed(title=f"Xマッチ({battle['results'][0]['rule']['name']})のステージ情報", description=f"{current_time.hour}時～{current_time.hour+2}時までのスケジュール", url="https://spla3.yuu26.com/api/x/now", color=discord.Colour.green(), timestamp=current_time)
 		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][0]['name'])
-		battle_embed.add_field(name="ステージ①", value=battle['results'][0]['stages'][1]['name'])
+		battle_embed.add_field(name="ステージ②", value=battle['results'][0]['stages'][1]['name'])
 		battle_stage1_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
 		battle_stage1_embed.set_image(url=battle['results'][0]['stages'][1]['image'])
 		battle_stage2_embed = discord.Embed(title="", description="", url="https://spla3.yuu26.com/api/x/now")
