@@ -258,7 +258,8 @@ class ReportMessage(discord.ui.Modal, title='メッセージの通報'):
 		embed.add_field(name="メッセージの内容", value=self.message.clean_content)
 		embed.add_field(name="該当ユーザー", value=self.message.author.mention)
 		embed.add_field(name="通報する理由", value=self.feedback.value)
-		button = discord.ui.Button(label="通報されたメッセージを削除",style=discord.ButtonStyle.primary,custom_id=f"reported_message_dm|{interaction.user.id}")
+		button = discord.ui.Button(label="通報されたメッセージを削除",style=discord.ButtonStyle.primary)
+		self.custom_id=f"reported_message_dm|{interaction.user.id}|{interaction.message.channel.id}|{interaction.message.id}"
 		view = discord.ui.View()
 		view.add_item(button)
 		await interaction.guild.get_channel(1211962072074559588).send(embed=embed, view=view)
@@ -316,7 +317,7 @@ class ReportedMessageProcess(discord.ui.Modal, title='通報されたメッセ�
 
 ## Button,Selectの処理
 async def on_button_click(interaction: discord.Interaction):
-	custom_id, user_id, channel_id, message_id = interaction.data["custom_id"].split("|")
+	custom_id, user_id, channel_id, message_id = interaction.data.custom_id.split("|")
 	if custom_id == "reported_message_dm":
 		user = client.get_user(int(user_id))
 		message = client.get_channel(int(channel_id)).fetch_message(int(message_id))
