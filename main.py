@@ -324,7 +324,7 @@ async def on_button_click(interaction: discord.Interaction):
 
 @tree.context_menu(name="メッセージを通報")
 async def reportmessage(interaction: discord.Interaction, message: discord.Message):
-	await interaction.response.send_modal(modal=ReportMessage(message))
+	await interaction.response.send_modal(ReportMessage(message))
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
