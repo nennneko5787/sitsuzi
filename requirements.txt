@@ -3,5 +3,5 @@ Flask
 google-generativeai
 twikit
 Misskey.py
-asyncpg
+supabase
 python-dotenv
