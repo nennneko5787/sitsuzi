@@ -33,6 +33,12 @@ if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
 	load_dotenv(verbose=True)
 
+from supabase import create_client, Client
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+
 # Google Generative AI（Gemini API）のAPIキー設定
 genai.configure(api_key=os.environ.get("gemini"))
 
@@ -111,8 +117,9 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.author.bot == False:
-		async with asyncpg.create_pool(os.getenv("dsn")) as pool:
+		async with asyncpg.create_pool(os.getenv("dsn"), timeout=10) as pool:
 			# テーブルからexpの値を取得
+			"""
 			exp = await pool.fetchval('''
 				SELECT exp FROM member_data WHERE id = $1
 			''', message.author.id)
@@ -121,6 +128,11 @@ async def on_message(message):
 			level = await pool.fetchval('''
 				SELECT level FROM member_data WHERE id = $1
 			''', message.author.id)
+			"""
+			loop = asyncio.get_event_loop()
+			data, count = await loop.run_in_executor(None,supabase.table('member_info').select("*").eq("id",message.author.id).execute)
+			exp = data[0]["exp"]
+			level = data[0]["level"]
 
 			exp = exp + random.uniform(0, 5)
 			if exp >= (35 * level):
@@ -128,10 +140,12 @@ async def on_message(message):
 				await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
 
 			# upsert実行
-			await pool.execute('''
-				INSERT INTO member_data (id, exp, level) VALUES ($1, $2, $3)
-				ON CONFLICT (id) DO UPDATE SET exp = EXCLUDED.exp, level = EXCLUDED.level
-			''', message.author.id, exp, level)
+			# await pool.execute('''
+			# 	INSERT INTO member_data (id, exp, level) VALUES ($1, $2, $3)
+			#	ON CONFLICT (id) DO UPDATE SET exp = EXCLUDED.exp, level = EXCLUDED.level
+			# ''', message.author.id, exp, level)
+			# supabaseのデータベースではasyncpgは使えない！死ね！
+			data, count = await loop.run_in_executor(None,supabase.table('countries').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
@@ -255,21 +269,16 @@ async def ping(interaction: discord.Interaction):
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
 async def rank(interaction: discord.Interaction, user: discord.Member = None):
-    await interaction.response.defer()
-    if user is None:
-        user = interaction.user
-    async with asyncpg.create_pool(os.getenv("dsn")) as pool:
-        exp = await pool.fetchval('''
-            SELECT exp FROM member_data WHERE id = $1
-        ''', user.id)
+	await interaction.response.defer()
+	if user is None:
+		user = interaction.user
+	loop = asyncio.get_event_loop()
+	data, count = await loop.run_in_executor(None,supabase.table('member_info').select("*").eq("id",user.id).execute)
+	exp = data[0]["exp"]
+	level = data[0]["level"]
 
-        # Retrieve level value from the table
-        level = await pool.fetchval('''
-            SELECT level FROM member_data WHERE id = $1
-        ''', user.id)
-
-        embed = discord.Embed(title=f"**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
-        await interaction.followup.send(embed=embed, silent=True)
+	embed = discord.Embed(title=f"**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
+	await interaction.followup.send(embed=embed, silent=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
 async def ping(interaction: discord.Interaction, formura: str):
