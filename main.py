@@ -109,14 +109,14 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.author.bot == False:
-		with await asyncpg.connect(os.getenv("dsn")) as conn:
+		async with asyncpg.create_pool(os.getenv("dsn")) as pool:
 			# テーブルからexpの値を取得
-			exp = await conn.fetchval('''
+			exp = await pool.fetchval('''
 				SELECT exp FROM member_data WHERE id = $1
 			''', message.author.id)
 
 			# テーブルからlevelの値を取得
-			level = await conn.fetchval('''
+			level = await pool.fetchval('''
 				SELECT level FROM member_data WHERE id = $1
 			''', message.author.id)
 
@@ -126,7 +126,7 @@ async def on_message(message):
 				await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
 
 			# upsert実行
-			await conn.execute('''
+			await pool.execute('''
 				INSERT INTO member_data (id, exp, level) VALUES ($1, $2, $3)
 				ON CONFLICT (id) DO UPDATE SET exp = EXCLUDED.exp, level = EXCLUDED.level
 			''', message.author.id, exp, level)
@@ -252,23 +252,22 @@ async def ping(interaction: discord.Interaction):
 	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
-async def ping(interaction: discord.Interaction, user: discord.Member = None):
-	await interaction.response.defer()
-	if user == None:
-		user = interaction.user
-	with await asyncpg.connect(os.getenv("dsn")) as conn:
-		# テーブルからexpの値を取得
-		exp = await conn.fetchval('''
-			SELECT exp FROM member_data WHERE id = $1
-		''', user.id)
+async def rank(interaction: discord.Interaction, user: discord.Member = None):
+    await interaction.response.defer()
+    if user is None:
+        user = interaction.user
+    async with asyncpg.create_pool(os.getenv("dsn")) as pool:
+        exp = await pool.fetchval('''
+            SELECT exp FROM member_data WHERE id = $1
+        ''', user.id)
 
-		# テーブルからlevelの値を取得
-		level = await conn.fetchval('''
-			SELECT level FROM member_data WHERE id = $1
-		''', user.id)
+        # Retrieve level value from the table
+        level = await pool.fetchval('''
+            SELECT level FROM member_data WHERE id = $1
+        ''', user.id)
 
-		embed = discord.Embed(title="**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
-		await interaction.followup.send(embed=embed,silent=True)
+        embed = discord.Embed(title=f"**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
+        await interaction.followup.send(embed=embed, silent=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
 async def ping(interaction: discord.Interaction, formura: str):
