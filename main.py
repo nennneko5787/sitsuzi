@@ -23,7 +23,6 @@ from misskey import Misskey
 import functools
 import datetime
 from zoneinfo import ZoneInfo
-import asyncpg
 import random
 
 import sys
