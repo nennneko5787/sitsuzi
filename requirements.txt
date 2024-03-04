@@ -3,3 +3,4 @@ Flask
 google-generativeai
 twikit
 Misskey.py
+asyncpg
