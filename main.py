@@ -116,18 +116,21 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.author.bot == False:
-		# テーブルからexpの値を取得
-		loop = asyncio.get_event_loop()
-		data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",message.author.id).execute)
-		exp = data[0][0]["exp"]
-		level = data[0][0]["level"]
-
-		exp = exp + random.uniform(0, 5)
-		if exp >= (35 * level):
-			level = level + 1
-			await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
-
-		data, count = await loop.run_in_executor(None,supabase.table('member_data').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
+		try:
+			# テーブルからexpの値を取得
+			loop = asyncio.get_event_loop()
+			data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",message.author.id).execute)
+			exp = data[0][0]["exp"]
+			level = data[0][0]["level"]
+	
+			exp = exp + random.uniform(0, 5)
+			if exp >= (35 * level):
+				level = level + 1
+				await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
+	
+			data, count = await loop.run_in_executor(None,supabase.table('member_data').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
+	except:
+		pass
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
