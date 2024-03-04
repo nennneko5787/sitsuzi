@@ -215,6 +215,7 @@ async def on_message(message):
 							file = discord.File(image_stream, filename=f"bokete{extension}")
 							await message.reply(f"# {title}\n{odai}\nこのボケは {date} に投稿されました\nID: {random_int}", file=file)
 
+"""
 	if message.author.bot == False:
 		try:
 			# テーブルからexpの値を取得
@@ -231,6 +232,7 @@ async def on_message(message):
 			data, count = await loop.run_in_executor(None,supabase.table('member_data').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
 	except:
 		pass
+"""
 
 @tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
 async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
