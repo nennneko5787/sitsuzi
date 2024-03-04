@@ -116,35 +116,18 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.author.bot == False:
-		async with asyncpg.create_pool(os.getenv("dsn"), timeout=10) as pool:
-			# テーブルからexpの値を取得
-			"""
-			exp = await pool.fetchval('''
-				SELECT exp FROM member_data WHERE id = $1
-			''', message.author.id)
+		# テーブルからexpの値を取得
+		loop = asyncio.get_event_loop()
+		data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",message.author.id).execute)
+		exp = data[0]["exp"]
+		level = data[0]["level"]
 
-			# テーブルからlevelの値を取得
-			level = await pool.fetchval('''
-				SELECT level FROM member_data WHERE id = $1
-			''', message.author.id)
-			"""
-			loop = asyncio.get_event_loop()
-			data, count = await loop.run_in_executor(None,supabase.table('member_info').select("*").eq("id",message.author.id).execute)
-			exp = data[0]["exp"]
-			level = data[0]["level"]
+		exp = exp + random.uniform(0, 5)
+		if exp >= (35 * level):
+			level = level + 1
+			await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
 
-			exp = exp + random.uniform(0, 5)
-			if exp >= (35 * level):
-				level = level + 1
-				await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
-
-			# upsert実行
-			# await pool.execute('''
-			# 	INSERT INTO member_data (id, exp, level) VALUES ($1, $2, $3)
-			#	ON CONFLICT (id) DO UPDATE SET exp = EXCLUDED.exp, level = EXCLUDED.level
-			# ''', message.author.id, exp, level)
-			# supabaseのデータベースではasyncpgは使えない！死ね！
-			data, count = await loop.run_in_executor(None,supabase.table('countries').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
+		data, count = await loop.run_in_executor(None,supabase.table('member_data').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
@@ -272,7 +255,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	if user is None:
 		user = interaction.user
 	loop = asyncio.get_event_loop()
-	data, count = await loop.run_in_executor(None,supabase.table('member_info').select("*").eq("id",user.id).execute)
+	data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",user.id).execute)
 	exp = data[0]["exp"]
 	level = data[0]["level"]
 
