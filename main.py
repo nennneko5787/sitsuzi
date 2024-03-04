@@ -32,11 +32,11 @@ if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
 	load_dotenv(verbose=True)
 
-from supabase import create_client, Client
+from supabase import create_client, Client as Supabase
 
 url: str = os.environ.get("SUPABASE_URL")
 key: str = os.environ.get("SUPABASE_KEY")
-supabase: Client = create_client(url, key)
+supabase: Supabase = create_client(url, key)
 
 # Google Generative AI（Gemini API）のAPIキー設定
 genai.configure(api_key=os.environ.get("gemini"))
