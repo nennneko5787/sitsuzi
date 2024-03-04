@@ -109,7 +109,11 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.author.bot == False:
+<<<<<<< HEAD
 		async with asyncpg.create_pool(os.getenv("dsn")) as pool:
+=======
+		async with asyncpg.connect(os.getenv("dsn")) as conn:
+>>>>>>> dcbd3be11e69361ecc5e837737cadb04dd692705
 			# テーブルからexpの値を取得
 			exp = await pool.fetchval('''
 				SELECT exp FROM member_data WHERE id = $1
@@ -252,6 +256,7 @@ async def ping(interaction: discord.Interaction):
 	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
+<<<<<<< HEAD
 async def rank(interaction: discord.Interaction, user: discord.Member = None):
     await interaction.response.defer()
     if user is None:
@@ -260,6 +265,17 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
         exp = await pool.fetchval('''
             SELECT exp FROM member_data WHERE id = $1
         ''', user.id)
+=======
+async def ping(interaction: discord.Interaction, user: discord.Member = None):
+	await interaction.response.defer()
+	if user == None:
+		user = interaction.user
+	async with asyncpg.connect(os.getenv("dsn")) as conn:
+		# テーブルからexpの値を取得
+		exp = await conn.fetchval('''
+			SELECT exp FROM member_data WHERE id = $1
+		''', user.id)
+>>>>>>> dcbd3be11e69361ecc5e837737cadb04dd692705
 
         # Retrieve level value from the table
         level = await pool.fetchval('''
