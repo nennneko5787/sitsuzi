@@ -109,7 +109,7 @@ async def on_ready():
 @client.event
 async def on_message(message):
 	if message.author.bot == False:
-		with await asyncpg.connect(os.getenv("dsn")) as conn:
+		async with asyncpg.connect(os.getenv("dsn")) as conn:
 			# テーブルからexpの値を取得
 			exp = await conn.fetchval('''
 				SELECT exp FROM member_data WHERE id = $1
@@ -256,7 +256,7 @@ async def ping(interaction: discord.Interaction, user: discord.Member = None):
 	await interaction.response.defer()
 	if user == None:
 		user = interaction.user
-	with await asyncpg.connect(os.getenv("dsn")) as conn:
+	async with asyncpg.connect(os.getenv("dsn")) as conn:
 		# テーブルからexpの値を取得
 		exp = await conn.fetchval('''
 			SELECT exp FROM member_data WHERE id = $1
