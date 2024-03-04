@@ -119,8 +119,8 @@ async def on_message(message):
 		# テーブルからexpの値を取得
 		loop = asyncio.get_event_loop()
 		data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",message.author.id).execute)
-		exp = data[0]["exp"]
-		level = data[0]["level"]
+		exp = data[0][0]["exp"]
+		level = data[0][0]["level"]
 
 		exp = exp + random.uniform(0, 5)
 		if exp >= (35 * level):
@@ -256,8 +256,8 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 		user = interaction.user
 	loop = asyncio.get_event_loop()
 	data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",user.id).execute)
-	exp = data[0]["exp"]
-	level = data[0]["level"]
+	exp = data[0][0]["exp"]
+	level = data[0][0]["level"]
 
 	embed = discord.Embed(title=f"**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
 	await interaction.followup.send(embed=embed, silent=True)
