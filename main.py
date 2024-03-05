@@ -131,6 +131,7 @@ async def update_member_data(connection, user_id, exp, level, nolevelUpNotifyFla
 
 async def on_ready():
 	print("Ready!")
+	await tree.sync()  # スラッシュコマンドを同期
 	server_stat.start()
 	try:
 		await twitter.login(
@@ -144,7 +145,6 @@ async def on_ready():
 	minute_random_five_hiragana.start()
 	hour.start()
 	spla3.start()
-	await tree.sync()  # スラッシュコマンドを同期
 
 @client.event
 async def on_message(message):
@@ -320,8 +320,8 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
 	await interaction.followup.send(embed=embed)
 
-@tree.command(name="setisnotlevelnotify", description="レベルの通知を送らないかどうか(Trueで送りません)")
-async def setisnotlevelnotify(interaction: discord.Interaction, nolevelUpNotifyFlag: bool):
+@tree.command(name="notlevelnotify", description="レベルの通知を送らないかどうか(Trueで送りません)")
+async def notlevelnotify(interaction: discord.Interaction, nolevelUpNotifyFlag: bool):
 	await interaction.response.defer()
 	# テーブルからexpの値を取得
 	connection = await connect_to_database()
