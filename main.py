@@ -297,6 +297,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	await interaction.response.defer()
 	if user is None:
 		user = interaction.user
+	# テーブルからexpの値を取得
 	connection = await connect_to_database()
 	record = await get_member_data(connection, user.id)
 	await connection.close()
@@ -307,7 +308,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 		exp = 0
 		level = 0
 
-	embed = discord.Embed(title=f"**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
+	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
 	await interaction.followup.send(embed=embed, silent=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
