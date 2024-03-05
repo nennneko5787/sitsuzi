@@ -166,7 +166,7 @@ async def on_message(message):
 			exp += random.randint(1, 50)
 			if exp >= 350 * level:
 				level += 1
-				exp = exp-350*level
+				exp = max(0, exp - 350 * level)
 				await client.get_channel(1208722087032651816).send(
 					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 					silent=nolevelUpNotifyFlag
@@ -203,7 +203,7 @@ async def on_message(message):
 					exp += xp
 					if exp >= 350 * level:
 						level += 1
-						exp = exp-350*level
+						exp = max(0, exp - 350 * level)
 						await client.get_channel(1208722087032651816).send(
 							f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 							silent=nolevelUpNotifyFlag
@@ -413,6 +413,35 @@ async def deletemsghistory(interaction: discord.Interaction, user: discord.Membe
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
 	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
+
+async def get_all_member_data(connection, page, per_page):
+	offset = (page - 1) * per_page
+	query = "SELECT * FROM member_data ORDER BY level DESC, exp DESC LIMIT $1 OFFSET $2"
+	records = await connection.fetch(query, per_page, offset)
+	return [dict(record) for record in records]
+
+
+@tree.command(name="top", description="レベルランキング")
+async def rank(interaction: discord.Interaction, page: int = 1):
+    await interaction.response.defer()
+
+    # 1ページあたりのユーザー数
+    per_page = 10
+
+    # テーブルからすべてのユーザーのレベル情報を取得
+    connection = await connect_to_database()
+    all_records = await get_all_member_data(connection, page, per_page)
+    await connection.close()
+
+    # 上位ランキングを表示するEmbedを作成
+    embed = discord.Embed(title="レベルランキング", color=discord.Color.gold())
+    for index, record in enumerate(all_records, start=(page - 1) * per_page + 1):
+        user = discord.utils.get(interaction.guild.members, id=record["user_id"])
+        if user:
+            embed.add_field(name=f"{index}. {user.mention}({user.display_name})", value=f"レベル: {record['level']} | 経験値: {record['exp']}", inline=False)
+
+    await interaction.followup.send(embed=embed)
+
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
 async def rank(interaction: discord.Interaction, user: discord.Member = None):
