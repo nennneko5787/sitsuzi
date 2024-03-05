@@ -195,32 +195,36 @@ async def on_message(message):
 				level = 0
 				nolevelUpNotifyFlag = False
 
-			if last_rogubo_date != datetime.datetime.strftime('%Y/%m/%d'):
-				xp = random.randint(0, 350 * level)
-				embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}",color=discord.Color.purple())
-				await message.reply(embed=embed)
-				exp += xp
-				if exp >= 350 * level:
-					level += 1
-					exp = exp-350*level
-					await client.get_channel(1208722087032651816).send(
-						f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
-						silent=nolevelUpNotifyFlag
-					)
-				connection = await connect_to_database()
-				await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
+			if last_rogubo_date != datetime.datetime.now().strftime('%Y/%m/%d'):
+				try:
+					xp = random.randint(0, 350 * level)
+					embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}",color=discord.Color.purple())
+					await message.reply(embed=embed)
+					exp += xp
+					if exp >= 350 * level:
+						level += 1
+						exp = exp-350*level
+						await client.get_channel(1208722087032651816).send(
+							f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+							silent=nolevelUpNotifyFlag
+						)
+					connection = await connect_to_database()
+					await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
 
-				await connection.execute(
-					"""
-					INSERT INTO member_data (id, last_rogubo_date)
-					VALUES ($1, $2)
-					ON CONFLICT (id) DO UPDATE
-					SET last_rogubo_date = $2
-					""",
-					message.author.id,
-					datetime.datetime.strftime('%Y/%m/%d'),
-				)
-				await connection.close()
+					await connection.execute(
+						"""
+						INSERT INTO member_data (id, last_rogubo_date)
+						VALUES ($1, $2)
+						ON CONFLICT (id) DO UPDATE
+						SET last_rogubo_date = $2
+						""",
+						message.author.id,
+						datetime.datetime.now().strftime('%Y/%m/%d'),
+					)
+					await connection.close()
+				except Exception as e:
+					traceback_info = traceback.format_exc()
+					await message.reply(f"ログインボーナス処理時のエラー。\n```\n{traceback_info}\n```")
 			else:
 				embed = discord.Embed(title="あなたはすでに今日のログインボーナスを獲得しています。", description="また明日、ログインボーナスを受け取ってみてください！",color=discord.Color.red())
 				await message.reply(embed=embed)
