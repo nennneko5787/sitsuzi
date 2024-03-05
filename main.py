@@ -401,6 +401,7 @@ async def on_message(message):
 							await message.reply(f"# {title}\n{odai}\nこのボケは {date} に投稿されました\nID: {random_int}", file=file)
 
 @tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
+@discord.app_commands.guilds(1208388325954560071)
 async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
 	if user == None:
 		user = interaction.user
@@ -416,6 +417,7 @@ async def deletemsghistory(interaction: discord.Interaction, user: discord.Membe
 		await interaction.response.send_message("あなたはまだ一度もAIと会話していないようです。", ephemeral=True)
 
 @tree.command(name="ping", description="ping")
+@discord.app_commands.guilds(1208388325954560071)
 async def ping(interaction: discord.Interaction):
 	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
 
@@ -427,7 +429,8 @@ async def get_all_member_data(connection, page, per_page):
 
 
 @tree.command(name="top", description="レベルランキング")
-async def rank(interaction: discord.Interaction, page: int = 1):
+@discord.app_commands.guilds(1208388325954560071)
+async def top(interaction: discord.Interaction, page: int = 1):
     await interaction.response.defer()
 
     # 1ページあたりのユーザー数
@@ -449,6 +452,7 @@ async def rank(interaction: discord.Interaction, page: int = 1):
 
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
+@discord.app_commands.guilds(1208388325954560071)
 async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	await interaction.response.defer()
 	if user is None:
@@ -468,6 +472,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	await interaction.followup.send(embed=embed)
 
 @tree.command(name="notlevelnotify", description="レベルの通知を送らないかどうか(Trueで送りません)")
+@discord.app_commands.guilds(1208388325954560071)
 async def notlevelnotify(interaction: discord.Interaction, nolevelUpNotifyFlag: bool):
 	await interaction.response.defer()
 	# テーブルからexpの値を取得
@@ -489,7 +494,8 @@ async def notlevelnotify(interaction: discord.Interaction, nolevelUpNotifyFlag: 
 	await interaction.followup.send(embed=embed, ephemeral=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
-async def ping(interaction: discord.Interaction, formura: str):
+@discord.app_commands.guilds(1208388325954560071)
+async def eval(interaction: discord.Interaction, formura: str):
 	await interaction.response.defer()
 	try:
 		answer = eval(formura)
@@ -500,6 +506,7 @@ async def ping(interaction: discord.Interaction, formura: str):
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
+@discord.app_commands.guilds(1208388325954560071)
 async def mcstart(interaction: discord.Interaction):
 	await interaction.response.defer()
 	url = 'https://panel.fps.ms/api/client/servers/03eaa96e/command'
