@@ -24,19 +24,13 @@ import functools
 import datetime
 from zoneinfo import ZoneInfo
 import random
-
+import asyncpg
 import sys
 sys.set_int_max_str_digits(0)
 
 if os.path.isfile(".env") == True:
 	from dotenv import load_dotenv
 	load_dotenv(verbose=True)
-
-from supabase import create_client, Client as Supabase
-
-url: str = os.environ.get("SUPABASE_URL")
-key: str = os.environ.get("SUPABASE_KEY")
-supabase: Supabase = create_client(url, key)
 
 # Google Generative AI（Gemini API）のAPIキー設定
 genai.configure(api_key=os.environ.get("gemini"))
@@ -51,26 +45,26 @@ generation_config = {
 
 safety_settings = [
   {
-    "category": "HARM_CATEGORY_HARASSMENT",
-    "threshold": "BLOCK_NONE"
+	"category": "HARM_CATEGORY_HARASSMENT",
+	"threshold": "BLOCK_NONE"
   },
   {
-    "category": "HARM_CATEGORY_HATE_SPEECH",
-    "threshold": "BLOCK_NONE"
+	"category": "HARM_CATEGORY_HATE_SPEECH",
+	"threshold": "BLOCK_NONE"
   },
   {
-    "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-    "threshold": "BLOCK_NONE"
+	"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+	"threshold": "BLOCK_NONE"
   },
   {
-    "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-    "threshold": "BLOCK_NONE"
+	"category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+	"threshold": "BLOCK_NONE"
   },
 ]
 
 model = genai.GenerativeModel(model_name="gemini-pro",
-                              generation_config=generation_config,
-                              safety_settings=safety_settings)
+							  generation_config=generation_config,
+							  safety_settings=safety_settings)
 
 chat_rooms = defaultdict(lambda: None)
 
@@ -81,8 +75,8 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 proxies = {
-    'http://': 'http://212.42.116.161:8080',
-    'https://': 'http://65.109.152.88:8888'
+	'http://': 'http://212.42.116.161:8080',
+	'https://': 'http://65.109.152.88:8888'
 }
 
 twitter = Client('ja-JP', proxies=proxies, timeout=300)
@@ -90,8 +84,50 @@ twitxt = ""
 
 misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
 
-# 起動時に動作する処理
-@client.event
+
+# Database configuration
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+
+async def connect_to_database():
+	return await asyncpg.connect(DATABASE_URL)
+
+
+async def create_tables(connection):
+	await connection.execute(
+		"""
+		CREATE TABLE IF NOT EXISTS member_data (
+			id BIGINT PRIMARY KEY,
+			exp DECIMAL,
+			level INT
+		)
+		"""
+	)
+
+
+async def get_member_data(connection, user_id):
+	return await connection.fetchrow(
+		"""
+		SELECT * FROM member_data WHERE id = $1
+		""",
+		user_id,
+	)
+
+
+async def update_member_data(connection, user_id, exp, level):
+	await connection.execute(
+		"""
+		INSERT INTO member_data (id, exp, level)
+		VALUES ($1, $2, $3)
+		ON CONFLICT (id) DO UPDATE
+		SET exp = $2, level = $3
+		""",
+		user_id,
+		exp,
+		level,
+	)
+
+
 async def on_ready():
 	print("Ready!")
 	server_stat.start()
@@ -99,22 +135,44 @@ async def on_ready():
 		await twitter.login(
 			auth_info_1=os.getenv("twitter_username"),
 			auth_info_2=os.getenv("twitter_email"),
-			password=os.getenv("twitter_password")
+			password=os.getenv("twitter_password"),
 		)
 	except:
 		pass
-		"""
-		resp = await twitter.http.get('https://twitter.com/i/api/2/notifications/all.json',headers=twitter._base_headers)
-		ch = client.get_channel(1211150798617313340)
-		ch.send(f"Twitter Rate Limit: {resp.headers.get('x-rate-limit-reset',0)}")
-		"""
+
 	minute_random_five_hiragana.start()
 	hour.start()
 	spla3.start()
-	await tree.sync()	#スラッシュコマンドを同期
+	await tree.sync()  # スラッシュコマンドを同期
 
 @client.event
 async def on_message(message):
+	if message.author.bot == False:
+		try:
+			# テーブルからexpの値を取得
+			connection = await connect_to_database()
+			record = await get_member_data(connection, message.author.id)
+			await connection.close()
+			if record:
+				exp = record["exp"]
+				level = record["level"]
+			else:
+				exp = 0
+				level = 0
+
+			exp += random.uniform(0, 5)
+			if exp >= 35 * level:
+				level += 1
+				await client.get_channel(1208722087032651816).send(
+					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉"
+				)
+
+			connection = await connect_to_database()
+			await update_member_data(connection, message.author.id, exp, level)
+			await connection.close()
+		except Exception as e:
+			print(f"Error: {e}")
+
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
 			global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
@@ -190,7 +248,7 @@ async def on_message(message):
 				odai = matches[1][1]
 		
 				# 正規表現パターンをコンパイル
-				pattern = re.compile(r'  <h1>\n    (.*?)\n  </h1>')
+				pattern = re.compile(r'  <h1>\n	(.*?)\n  </h1>')
 				# マッチしたすべての部分をリストとして取得
 				matches = pattern.findall(r)
 				print(matches)
@@ -214,25 +272,6 @@ async def on_message(message):
 							extension = mimetypes.guess_extension(content_type)
 							file = discord.File(image_stream, filename=f"bokete{extension}")
 							await message.reply(f"# {title}\n{odai}\nこのボケは {date} に投稿されました\nID: {random_int}", file=file)
-
-"""
-	if message.author.bot == False:
-		try:
-			# テーブルからexpの値を取得
-			loop = asyncio.get_event_loop()
-			data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",message.author.id).execute)
-			exp = data[0][0]["exp"]
-			level = data[0][0]["level"]
-	
-			exp = exp + random.uniform(0, 5)
-			if exp >= (35 * level):
-				level = level + 1
-				await client.get_channel(1208722087032651816).send(f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉")
-	
-			data, count = await loop.run_in_executor(None,supabase.table('member_data').upsert({'id': message.author.id, 'exp': exp, 'level': level}).execute)
-	except:
-		pass
-"""
 
 @tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
 async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
@@ -258,10 +297,15 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	await interaction.response.defer()
 	if user is None:
 		user = interaction.user
-	loop = asyncio.get_event_loop()
-	data, count = await loop.run_in_executor(None,supabase.table('member_data').select("*").eq("id",user.id).execute)
-	exp = data[0][0]["exp"]
-	level = data[0][0]["level"]
+	connection = await connect_to_database()
+	record = await get_member_data(connection, user.id)
+	await connection.close()
+	if record:
+		exp = record["exp"]
+		level = record["level"]
+	else:
+		exp = 0
+		level = 0
 
 	embed = discord.Embed(title=f"**{user.mention}** の情報", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}")
 	await interaction.followup.send(embed=embed, silent=True)
