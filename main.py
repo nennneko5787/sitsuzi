@@ -197,7 +197,7 @@ async def on_message(message):
 
 			if last_rogubo_date != datetime.datetime.strftime('%Y/%m/%d'):
 				xp = random.randint(0, 350 * level)
-				embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}")
+				embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}",color=discord.Color.purple())
 				await message.reply(embed=embed)
 				exp += xp
 				if exp >= 350 * level:
@@ -221,6 +221,9 @@ async def on_message(message):
 					datetime.datetime.strftime('%Y/%m/%d'),
 				)
 				await connection.close()
+			else:
+				embed = discord.Embed(title="あなたはすでに今日のログインボーナスを獲得しています。", description="また明日、ログインボーナスを受け取ってみてください！",color=discord.Color.red())
+				await message.reply(embed=embed)
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
