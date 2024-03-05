@@ -163,12 +163,7 @@ async def on_message(message):
 				level = 0
 				nolevelUpNotifyFlag = False
 
-
-			while True:
-				newexp = random.uniform(0, 5)
-				if newexp != 0:
-					break
-			exp += newexp
+			exp += random.uniform(0, 5)
 			if exp >= 35 * level:
 				level += 1
 				await client.get_channel(1208722087032651816).send(
