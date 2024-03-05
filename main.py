@@ -131,7 +131,7 @@ async def update_member_data(connection, user_id, exp, level, nolevelUpNotifyFla
 
 async def on_ready():
 	print("Ready!")
-	await tree.sync()  # スラッシュコマンドを同期
+	await tree.sync(guild=discord.Object(id=1208388325954560071))
 	server_stat.start()
 	try:
 		await twitter.login(
