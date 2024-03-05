@@ -315,7 +315,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
 	await interaction.followup.send(embed=embed)
 
-@tree.command(name="setNolevelUpNotifyFlag", description="レベルの通知を送らないかどうか(Trueで送りません)")
+@tree.command(name="setnolevelupnotifyflag", description="レベルの通知を送らないかどうか(Trueで送りません)")
 async def setNolevelUpNotifyFlag(interaction: discord.Interaction, nolevelUpNotifyFlag: bool):
 	await interaction.response.defer()
 	# テーブルからexpの値を取得
