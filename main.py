@@ -163,8 +163,8 @@ async def on_message(message):
 				level = 0
 				nolevelUpNotifyFlag = False
 
-			exp += Decimal(random.uniform(1, 5))
-			if Decimal(exp) >= Decimal(35 * level):
+			exp += random.randint(1, 50)
+			if exp >= 350 * level:
 				level += 1
 				exp = 0
 				await client.get_channel(1208722087032651816).send(
@@ -313,7 +313,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 		exp = 0
 		level = 0
 
-	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
+	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {350 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
 	await interaction.followup.send(embed=embed)
 
 @tree.command(name="notlevelnotify", description="レベルの通知を送らないかどうか(Trueで送りません)")
