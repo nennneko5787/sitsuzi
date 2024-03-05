@@ -163,9 +163,10 @@ async def on_message(message):
 				level = 0
 				nolevelUpNotifyFlag = False
 
-			exp += random.uniform(1, 5)
-			if exp >= 35 * level:
+			exp += Decimal(random.uniform(1, 5))
+			if Decimal(exp) >= Decimal(35 * level):
 				level += 1
+				exp = 0
 				await client.get_channel(1208722087032651816).send(
 					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 					silent=nolevelUpNotifyFlag
