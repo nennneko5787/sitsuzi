@@ -157,7 +157,7 @@ async def on_message(message):
 			if record:
 				exp = record["exp"]
 				level = record["level"]
-				nolevelUpNotifyFlag = record["nolevelUpNotifyFlag"]
+				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
 			else:
 				exp = 0
 				level = 0
