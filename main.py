@@ -166,7 +166,7 @@ async def on_message(message):
 			exp += random.randint(1, 50)
 			if exp >= 350 * level:
 				level += 1
-				exp = 0
+				exp = exp-350*level
 				await client.get_channel(1208722087032651816).send(
 					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 					silent=nolevelUpNotifyFlag
@@ -178,6 +178,49 @@ async def on_message(message):
 		except Exception as e:
 			traceback_info = traceback.format_exc()
 			await message.reply(f"経験値付与時のエラー。\n```\n{traceback_info}\n```")
+
+		if client.get_guild(1208388325954560071).get_role(1214528496110542898) in message.role_mentions:
+			# テーブルからexpの値を取得
+			connection = await connect_to_database()
+			record = await get_member_data(connection, message.author.id)
+			await connection.close()
+			if record:
+				exp = record["exp"]
+				level = record["level"]
+				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
+				last_rogubo_date = record["last_rogubo_date"]
+			else:
+				last_rogubo_date = ""
+				exp = 0
+				level = 0
+				nolevelUpNotifyFlag = False
+
+			if last_rogubo_date != datetime.datetime.strftime('%Y/%m/%d'):
+				xp = random.randint(0, 350 * level)
+				embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}")
+				await message.reply(embed=embed)
+				exp += xp
+				if exp >= 350 * level:
+					level += 1
+					exp = exp-350*level
+					await client.get_channel(1208722087032651816).send(
+						f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+						silent=nolevelUpNotifyFlag
+					)
+				connection = await connect_to_database()
+				await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
+
+				await connection.execute(
+					"""
+					INSERT INTO member_data (id, last_rogubo_date)
+					VALUES ($1, $2)
+					ON CONFLICT (id) DO UPDATE
+					SET last_rogubo_date = $2
+					""",
+					message.author.id,
+					datetime.datetime.strftime('%Y/%m/%d'),
+				)
+				await connection.close()
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
