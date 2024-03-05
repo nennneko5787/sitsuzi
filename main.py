@@ -190,7 +190,7 @@ async def on_message(message):
 				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
 				last_rogubo_date = record["last_rogubo_date"]
 			else:
-				last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d'):
+				last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
 				exp = 0
 				level = 0
 				nolevelUpNotifyFlag = False
