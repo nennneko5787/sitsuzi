@@ -114,17 +114,18 @@ async def get_member_data(connection, user_id):
 	)
 
 
-async def update_member_data(connection, user_id, exp, level):
+async def update_member_data(connection, user_id, exp, level, nolevelUpNotifyFlag):
 	await connection.execute(
 		"""
-		INSERT INTO member_data (id, exp, level)
-		VALUES ($1, $2, $3)
+		INSERT INTO member_data (id, exp, level, nolevelUpNotifyFlag)
+		VALUES ($1, $2, $3, $4)
 		ON CONFLICT (id) DO UPDATE
-		SET exp = $2, level = $3
+		SET exp = $2, level = $3, nolevelUpNotifyFlag = $4
 		""",
 		user_id,
 		exp,
 		level,
+		nolevelUpNotifyFlag,
 	)
 
 
@@ -156,19 +157,22 @@ async def on_message(message):
 			if record:
 				exp = record["exp"]
 				level = record["level"]
+				nolevelUpNotifyFlag = record["nolevelUpNotifyFlag"]
 			else:
 				exp = 0
 				level = 0
+				nolevelUpNotifyFlag = False
 
 			exp += random.uniform(0, 5)
 			if exp >= 35 * level:
 				level += 1
 				await client.get_channel(1208722087032651816).send(
-					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉"
+					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+					silent=nolevelUpNotifyFlag
 				)
 
 			connection = await connect_to_database()
-			await update_member_data(connection, message.author.id, exp, level)
+			await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
 			await connection.close()
 		except Exception as e:
 			print(f"Error: {e}")
@@ -309,7 +313,28 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 		level = 0
 
 	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {35 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
-	await interaction.followup.send(embed=embed, silent=True)
+	await interaction.followup.send(embed=embed)
+
+@tree.command(name="setNolevelUpNotifyFlag", description="レベルの通知を送らないかどうか(Trueで送りません)")
+async def setNolevelUpNotifyFlag(interaction: discord.Interaction, nolevelUpNotifyFlag: bool):
+	await interaction.response.defer()
+	# テーブルからexpの値を取得
+	connection = await connect_to_database()
+	record = await get_member_data(connection, interaction.user.id)
+	await connection.close()
+	if record:
+		exp = record["exp"]
+		level = record["level"]
+	else:
+		exp = 0
+		level = 0
+
+	connection = await connect_to_database()
+	await update_member_data(connection, interaction.user.id, exp, level, nolevelUpNotifyFlag)
+	await connection.close()
+
+	embed = discord.Embed(title=f"設定を変更しました。", description=f"レベルの通知を送らないかどうか: {nolevelUpNotifyFlag}")
+	await interaction.followup.send(embed=embed, ephemeral=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
 async def ping(interaction: discord.Interaction, formura: str):
