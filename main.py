@@ -176,7 +176,8 @@ async def on_message(message):
 			await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
 			await connection.close()
 		except Exception as e:
-			print(f"Error: {e}")
+			traceback_info = traceback.format_exc()
+			await message.reply(f"経験値付与時のエラー。\n```\n{traceback_info}\n```")
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
