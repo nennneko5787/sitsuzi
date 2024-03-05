@@ -190,12 +190,12 @@ async def on_message(message):
 				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
 				last_rogubo_date = record["last_rogubo_date"]
 			else:
-				last_rogubo_date = ""
+				last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d'):
 				exp = 0
 				level = 0
 				nolevelUpNotifyFlag = False
 
-			if last_rogubo_date != datetime.datetime.now().strftime('%Y/%m/%d'):
+			if last_rogubo_date != datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d'):
 				try:
 					xp = random.randint(0, 350 * level)
 					embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}",color=discord.Color.purple())
@@ -219,7 +219,7 @@ async def on_message(message):
 						SET last_rogubo_date = $2
 						""",
 						message.author.id,
-						datetime.datetime.now().strftime('%Y/%m/%d'),
+						datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d'),
 					)
 					await connection.close()
 				except Exception as e:
