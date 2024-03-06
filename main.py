@@ -293,7 +293,7 @@ async def on_message(message):
 				]
 				msg = random.choice(野獣語録)
 				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
-				await message.reply(msg)
+				await message.reply(embed=embed)
 
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
