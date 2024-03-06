@@ -295,11 +295,6 @@ async def on_message(message):
 				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
 				await message.reply(msg)
 
-	if message.channel.id == 1208388344044593192:
-		if message.author.bot == False:
-			await message.add_reaction("👍")
-			await message.add_reaction("👎")
-
 	if message.channel.id == 1210867877641457704:
 		if message.author.bot == False:
 			global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
