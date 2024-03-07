@@ -464,7 +464,7 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	await interaction.followup.send(embed=embed)
 
 @tree.command(name="notlevelnotify", description="レベルの通知を送らないかどうか(Trueで送りません)")
-async def notlevelnotify(interaction: discord.Interaction, nolevelUpNotifyFlag: bool):
+async def notlevelnotify(interaction: discord.Interaction, flag: bool):
 	await interaction.response.defer()
 	# テーブルからexpの値を取得
 	connection = await connect_to_database()
@@ -478,10 +478,10 @@ async def notlevelnotify(interaction: discord.Interaction, nolevelUpNotifyFlag: 
 		level = 0
 
 	connection = await connect_to_database()
-	await update_member_data(connection, interaction.user.id, exp, level, nolevelUpNotifyFlag)
+	await update_member_data(connection, interaction.user.id, exp, level, flag)
 	await connection.close()
 
-	embed = discord.Embed(title=f"設定を変更しました。", description=f"レベルの通知を送らないかどうか: {nolevelUpNotifyFlag}")
+	embed = discord.Embed(title=f"設定を変更しました。", description=f"レベルの通知を送らないかどうか: {flag}")
 	await interaction.followup.send(embed=embed, ephemeral=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
