@@ -440,7 +440,7 @@ async def top(interaction: discord.Interaction, page: int = 1):
 	for index, record in enumerate(all_records, start=(page - 1) * per_page + 1):
 		user = interaction.guild.get_member(record["id"])
 		if user:
-			desc.append(f"### #{index} {user.mention}({user.display_name})\nレベル: {record['level']} | 経験値: {record['exp']} / {record['level'] * 350}")
+			desc.append(f"**#{index} {user.mention}({user.display_name})**\nレベル: {record['level']} | 経験値: {record['exp']} / {record['level'] * 350}")
 	embed.description = "\n".join(desc)
 
 	await interaction.followup.send(embed=embed,silent=True)
