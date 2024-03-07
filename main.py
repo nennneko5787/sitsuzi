@@ -133,6 +133,8 @@ async def setup_hook():
 	print("Ready!")
 	await tree.sync()
 
+@client.event
+async def on_ready():
 	server_stat.start()
 	try:
 		await twitter.login(
