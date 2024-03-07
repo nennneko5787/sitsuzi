@@ -437,7 +437,7 @@ async def top(interaction: discord.Interaction, page: int = 1):
     # 上位ランキングを表示するEmbedを作成
     embed = discord.Embed(title="レベルランキング", color=discord.Color.gold())
     for index, record in enumerate(all_records, start=(page - 1) * per_page + 1):
-        user = discord.utils.get(interaction.guild.members, id=record["user_id"])
+        user = interaction.guild.get_member(record["id"])
         if user:
             embed.add_field(name=f"{index}. {user.mention}({user.display_name})", value=f"レベル: {record['level']} | 経験値: {record['exp']}", inline=False)
 
