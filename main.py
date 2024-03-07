@@ -424,24 +424,26 @@ async def get_all_member_data(connection, page, per_page):
 
 @tree.command(name="top", description="レベルランキング")
 async def top(interaction: discord.Interaction, page: int = 1):
-    await interaction.response.defer()
+	await interaction.response.defer()
 
-    # 1ページあたりのユーザー数
-    per_page = 10
+	# 1ページあたりのユーザー数
+	per_page = 10
 
-    # テーブルからすべてのユーザーのレベル情報を取得
-    connection = await connect_to_database()
-    all_records = await get_all_member_data(connection, page, per_page)
-    await connection.close()
+	# テーブルからすべてのユーザーのレベル情報を取得
+	connection = await connect_to_database()
+	all_records = await get_all_member_data(connection, page, per_page)
+	await connection.close()
 
-    # 上位ランキングを表示するEmbedを作成
-    embed = discord.Embed(title="レベルランキング", color=discord.Color.gold())
-    for index, record in enumerate(all_records, start=(page - 1) * per_page + 1):
-        user = interaction.guild.get_member(record["id"])
-        if user:
-            embed.add_field(name=f"{index}. {user.mention}({user.display_name})", value=f"レベル: {record['level']} | 経験値: {record['exp']}", inline=False)
+	# 上位ランキングを表示するEmbedを作成
+	embed = discord.Embed(title="レベルランキング", color=discord.Color.gold())
+	desc = []
+	for index, record in enumerate(all_records, start=(page - 1) * per_page + 1):
+		user = interaction.guild.get_member(record["id"])
+		if user:
+			desc.append(f"### #{index} {user.mention}({user.display_name})\nレベル: {record['level']} | 経験値: {record['exp']}")
+	embed.description = "\n".join(desc)
 
-    await interaction.followup.send(embed=embed)
+	await interaction.followup.send(embed=embed,silent=True)
 
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
