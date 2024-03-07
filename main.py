@@ -128,10 +128,11 @@ async def update_member_data(connection, user_id, exp, level, nolevelUpNotifyFla
 		nolevelUpNotifyFlag,
 	)
 
-
+@client.event
 async def on_ready():
 	print("Ready!")
 	await tree.sync()
+
 	server_stat.start()
 	try:
 		await twitter.login(
