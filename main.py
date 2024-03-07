@@ -129,7 +129,7 @@ async def update_member_data(connection, user_id, exp, level, nolevelUpNotifyFla
 	)
 
 @client.event
-async def on_ready():
+async def setup_hook():
 	print("Ready!")
 	await tree.sync()
 
