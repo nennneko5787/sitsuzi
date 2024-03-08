@@ -150,6 +150,12 @@ async def on_ready():
 	spla3.start()
 
 @client.event
+async def on_member_update(before, after):
+	if client.get_guild(1208388325954560071).get_role(1210934608556986388) in after.roles:
+		if client.get_guild(1208388325954560071).get_role(1208388351372169256) in after.roles:
+			await after.remove_roles(client.get_guild(1208388325954560071).get_role(1208388351372169256))
+
+@client.event
 async def on_message(message):
 	if message.author.bot == False:
 		try:
