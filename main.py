@@ -287,17 +287,6 @@ async def on_message(message):
 						)
 					connection = await connect_to_database()
 					await update_member_data(connection, message.author.id, exp, level, coin, nolevelUpNotifyFlag)
-
-					await connection.execute(
-						"""
-						INSERT INTO member_data (id, last_rogubo_date)
-						VALUES ($1, $2, $3)
-						ON CONFLICT (id) DO UPDATE
-						SET last_rogubo_date = $2
-						""",
-						message.author.id,
-						datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
-					)
 					await connection.close()
 				except Exception as e:
 					traceback_info = traceback.format_exc()
