@@ -226,7 +226,7 @@ async def on_message(message):
 							silent=nolevelUpNotifyFlag
 						)
 					connection = await connect_to_database()
-					await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
+					await update_member_data(connection, message.author.id, exp, level, coin, nolevelUpNotifyFlag)
 
 					await connection.execute(
 						"""
