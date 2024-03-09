@@ -114,17 +114,18 @@ async def get_member_data(connection, user_id):
 	)
 
 
-async def update_member_data(connection, user_id, exp, level, nolevelUpNotifyFlag):
+async def update_member_data(connection, user_id, exp, level, coin, nolevelUpNotifyFlag):
 	await connection.execute(
 		"""
-		INSERT INTO member_data (id, exp, level, nolevelUpNotifyFlag)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO member_data (id, exp, level, coin, nolevelUpNotifyFlag)
+		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (id) DO UPDATE
-		SET exp = $2, level = $3, nolevelUpNotifyFlag = $4
+		SET exp = $2, level = $3, coin = $4, nolevelUpNotifyFlag = $5
 		""",
 		user_id,
 		exp,
 		level,
+		coin,
 		nolevelUpNotifyFlag,
 	)
 
@@ -166,13 +167,16 @@ async def on_message(message):
 			if record:
 				exp = record["exp"]
 				level = record["level"]
+				coin = record["coin"]
 				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
 			else:
 				exp = 0
 				level = 0
+				coin = 0
 				nolevelUpNotifyFlag = False
 
 			exp += random.randint(1, 50)
+			coin += 1
 			if exp >= 350 * level:
 				level += 1
 				exp = max(0, exp - 350 * level)
@@ -182,7 +186,7 @@ async def on_message(message):
 				)
 
 			connection = await connect_to_database()
-			await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
+			await update_member_data(connection, message.author.id, exp, level, coin, nolevelUpNotifyFlag)
 			await connection.close()
 		except Exception as e:
 			traceback_info = traceback.format_exc()
@@ -196,20 +200,24 @@ async def on_message(message):
 			if record:
 				exp = record["exp"]
 				level = record["level"]
+				coin = record["coin"]
 				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
 				last_rogubo_date = record["last_rogubo_date"]
 			else:
 				last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
 				exp = 0
 				level = 0
+				coin = 0
 				nolevelUpNotifyFlag = False
 
 			if last_rogubo_date != datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d'):
 				try:
 					xp = random.randint(0, 350 * level)
-					embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}",color=discord.Color.purple())
+					c = random.randint(0, 200)
+					embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}\nsʜɪᴛsᴜᴢɪ ᴄᴏɪɴ + {c}",color=discord.Color.purple())
 					await message.reply(embed=embed)
 					exp += xp
+					coin += c
 					if exp >= 350 * level:
 						level += 1
 						exp = max(0, exp - 350 * level)
@@ -236,6 +244,66 @@ async def on_message(message):
 					await message.reply(f"ログインボーナス処理時のエラー。\n```\n{traceback_info}\n```")
 			else:
 				embed = discord.Embed(title="あなたはすでに今日のログインボーナスを獲得しています。", description="また明日、ログインボーナスを受け取ってみてください！",color=discord.Color.red())
+				await message.reply(embed=embed)
+
+		if client.get_guild(1208388325954560071).get_role(1215869247763382394) in message.role_mentions:
+			# テーブルからexpの値を取得
+			connection = await connect_to_database()
+			record = await get_member_data(connection, message.author.id)
+			await connection.close()
+			if record:
+				exp = record["exp"]
+				level = record["level"]
+				coin = record["coin"]
+				nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
+				last_rogubo_date = record["last_rogubo_date"]
+			else:
+				last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
+				exp = 0
+				level = 0
+				coin = 0
+				nolevelUpNotifyFlag = False
+
+			if coin >= 20:
+				try:
+					xp = random.randint(-350 * level, 350 * level)
+					embed = discord.Embed(title="ガチャの結果", description=f"経験値 + {xp}",color=discord.Color.purple())
+					await message.reply(embed=embed)
+					exp += xp
+					coin -= 20
+					if exp >= 350 * level:
+						level += 1
+						exp = max(0, exp - 350 * level)
+						await client.get_channel(1208722087032651816).send(
+							f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+							silent=nolevelUpNotifyFlag
+						)
+					elif exp <= -350 * level:
+						level += 1
+						exp = max(0, exp - 350 * (level - 1))
+						await client.get_channel(1208722087032651816).send(
+							f"😢 **{message.author.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
+							silent=nolevelUpNotifyFlag
+						)
+					connection = await connect_to_database()
+					await update_member_data(connection, message.author.id, exp, level, nolevelUpNotifyFlag)
+
+					await connection.execute(
+						"""
+						INSERT INTO member_data (id, last_rogubo_date)
+						VALUES ($1, $2, $3)
+						ON CONFLICT (id) DO UPDATE
+						SET last_rogubo_date = $2
+						""",
+						message.author.id,
+						datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
+					)
+					await connection.close()
+				except Exception as e:
+					traceback_info = traceback.format_exc()
+					await message.reply(f"ガチャ処理時のエラー。\n```\n{traceback_info}\n```")
+			else:
+				embed = discord.Embed(title="sʜɪᴛsᴜᴢɪ ᴄᴏɪɴ がたりません。", description="20ためてください。",color=discord.Color.red())
 				await message.reply(embed=embed)
 
 		if message.channel.id == 1208943057483862016:
@@ -448,7 +516,7 @@ async def top(interaction: discord.Interaction, page: int = 1):
 	for index, record in enumerate(all_records, start=(page - 1) * per_page + 1):
 		user = interaction.guild.get_member(record["id"])
 		if user:
-			desc.append(f"**#{index} {user.mention}({user.name})**\nレベル: {record['level']} | 経験値: {record['exp']} / {record['level'] * 350}")
+			desc.append(f"**#{index} {user.mention}({user.name})**\nレベル: {record['level']} | 経験値: {record['exp']} / {record['level'] * 350} | sʜɪᴛsᴜᴢɪ ᴄᴏɪɴ: {record['coin']}")
 	embed.description = "\n".join(desc)
 
 	await interaction.followup.send(embed=embed,silent=True)
@@ -466,11 +534,13 @@ async def rank(interaction: discord.Interaction, user: discord.Member = None):
 	if record:
 		exp = record["exp"]
 		level = record["level"]
+		coin = record["coin"]
 	else:
 		exp = 0
 		level = 0
+		coin = 0
 
-	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {350 * level}").set_author(name=user.display_name, icon_url=user.display_avatar)
+	embed = discord.Embed(title=f"このユーザーのステータス", description=f"レベル: **{level}**\n経験値: {exp} / {350 * level}\nsʜɪᴛsᴜᴢɪ ᴄᴏɪɴ: {coin}").set_author(name=user.display_name, icon_url=user.display_avatar)
 	await interaction.followup.send(embed=embed)
 
 @tree.command(name="notlevelnotify", description="レベルの通知を送らないかどうか(Trueで送りません)")
@@ -483,12 +553,14 @@ async def notlevelnotify(interaction: discord.Interaction, flag: bool):
 	if record:
 		exp = record["exp"]
 		level = record["level"]
+		coin = record["coin"]
 	else:
 		exp = 0
 		level = 0
+		coin = 0
 
 	connection = await connect_to_database()
-	await update_member_data(connection, interaction.user.id, exp, level, flag)
+	await update_member_data(connection, interaction.user.id, exp, level, coin, flag)
 	await connection.close()
 
 	embed = discord.Embed(title=f"設定を変更しました。", description=f"レベルの通知を送らないかどうか: {flag}")
