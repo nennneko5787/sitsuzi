@@ -278,7 +278,7 @@ async def on_message(message):
 							f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 							silent=nolevelUpNotifyFlag
 						)
-					elif exp <= -350 * level:
+					elif exp <= 0:
 						level += 1
 						exp = max(0, exp - 350 * (level - 1))
 						await client.get_channel(1208722087032651816).send(
