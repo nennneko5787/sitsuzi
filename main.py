@@ -378,19 +378,14 @@ async def on_message(message):
 			if chat_rooms[message.author.id] == None:
 				# チャットを開始
 				chat_rooms[message.author.id] = model.start_chat(history=[])
-			# タイピングしてみる
-			async with message.channel.typing():
-				msg = await message.reply("私は今返答を考えているところです...")
+
+			msg = await message.reply("私は今返答を考えているところです...")
 			try:
 				# プロンプト
 				prompt = global_prom_1
 
-				# イベントループを取得
-				loop = asyncio.get_event_loop()
-
 				# Gemini APIを使って応答を生成 (非同期で実行)
-				partial_func = functools.partial(chat_rooms[message.author.id].send_message, prompt, stream=True)
-				response = await loop.run_in_executor(None, partial_func)
+				response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt, stream=True)
 
 				text = ""
 				for chunk in response:
