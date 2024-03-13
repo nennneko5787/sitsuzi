@@ -385,7 +385,7 @@ async def on_message(message):
 					prompt = global_prom_1
 
 					# Gemini APIを使って応答を生成 (非同期で実行)
-					response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt, stream=True)
+					response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt)
 
 					await message.reply(response.text)
 				except:
