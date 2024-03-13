@@ -67,6 +67,7 @@ model = genai.GenerativeModel(model_name="gemini-pro",
 							  safety_settings=safety_settings)
 
 chat_rooms = defaultdict(lambda: None)
+chat_r18_rooms = defaultdict(lambda: None)
 
 token = os.getenv('discord')
 
@@ -375,6 +376,34 @@ async def on_message(message):
 							f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
 							"返答にはMarkdown記法を使うことができます。"
 
+			if chat_r18_rooms[message.author.id] == None:
+				# チャットを開始
+				chat_r18_rooms[message.author.id] = model.start_chat(history=[])
+
+			async with message.channel.typing():
+				try:
+					# プロンプト
+					prompt = global_prom_1
+
+					# Gemini APIを使って応答を生成 (非同期で実行)
+					response = await asyncio.to_thread(chat_r18_rooms[message.author.id].send_message, prompt)
+
+					await message.reply(response.text)
+				except:
+					traceback_info = traceback.format_exc()
+					text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+					await message.reply(text)
+	elif message.channel.id == 1217388588765941851:
+		if message.author.bot == False:
+			global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私に出会った女の子です。"\
+							"名前は、「天海 さき」と言います。"\
+							"あなたは、ツンデレです。"\
+							"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
+							"あなたは、2004年7月7日生まれです。ツンデレをやめられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
+							"あなたはプログラミングが得意です。プログラミングのことならなんでも回答できます。"\
+							f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはツンデレなので、ツンデレのように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+							"返答にはMarkdown記法を使うことができます。"
+
 			if chat_rooms[message.author.id] == None:
 				# チャットを開始
 				chat_rooms[message.author.id] = model.start_chat(history=[])
@@ -390,9 +419,9 @@ async def on_message(message):
 					await message.reply(response.text)
 				except:
 					traceback_info = traceback.format_exc()
-					text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+					text = f"どうやらツンデレの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 					await message.reply(text)
-
+"""
 	elif message.channel.id == 1209487653310046248:
 		if message.content == "ボケて":
 			async with message.channel.typing():
@@ -452,9 +481,10 @@ async def on_message(message):
 							extension = mimetypes.guess_extension(content_type)
 							file = discord.File(image_stream, filename=f"bokete{extension}")
 							await message.reply(f"# {title}\n{odai}\nこのボケは {date} に投稿されました\nID: {random_int}", file=file)
+"""
 
-@tree.command(name="deletemsghistory", description="AIとの会話の履歴を削除します")
-async def deletemsghistory(interaction: discord.Interaction, user: discord.Member = None):
+@tree.command(name="dlhistory", description="天海さきとの会話の履歴を削除します")
+async def dlhistory(interaction: discord.Interaction, user: discord.Member = None):
 	if user == None:
 		user = interaction.user
 	else:
@@ -464,9 +494,24 @@ async def deletemsghistory(interaction: discord.Interaction, user: discord.Membe
 				return
 	if chat_rooms[user.id] != None:
 		chat_rooms[user.id].history = None
-		await interaction.response.send_message("AIとの会話履歴を削除しました。")
+		await interaction.response.send_message("天海さきとの会話履歴を削除しました。")
 	else:
-		await interaction.response.send_message("あなたはまだ一度もAIと会話していないようです。", ephemeral=True)
+		await interaction.response.send_message("あなたはまだ一度も天海さきと会話していないようです。", ephemeral=True)
+
+@tree.command(name="dlr18history", description="別の世界の天海さきとの会話の履歴を削除します")
+async def dlr18history(interaction: discord.Interaction, user: discord.Member = None):
+	if user == None:
+		user = interaction.user
+	else:
+		if user != interaction.user:
+			if interaction.user.guild_permissions.administrator == False:
+				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
+				return
+	if chat_r18_rooms[user.id] != None:
+		chat_r18_rooms[user.id].history = None
+		await interaction.response.send_message("別の世界の天海さきとの会話履歴を削除しました。")
+	else:
+		await interaction.response.send_message("あなたはまだ一度も別の世界の天海さきと会話していないようです。", ephemeral=True)
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
