@@ -667,12 +667,15 @@ async def change():
 		f"TIPS: 運営は{len(client.get_guild(1208388325954560071).get_role(1210166744472092702).members)}人いますわ！",
 		"TIPS: 私は render.com っていうサーバーで動いているみたいですわ🤔(今はMi-aもこのサーバーで動いてるらしい)",
 		"TIPS: 今は邪魔してほしくないですわ...",
+		"TIPS: 眠いですわ…",
 	]
 	tips.append(f"TIPS: TIPSは全部で{len(tips)+1}個存在しますわ！")
 	tip = random.choice(tips)
 	game = discord.Game(tip)
 	if tip == "TIPS: 今は邪魔してほしくないですわ...":
 		status = discord.Status.dnd	#do not disturb
+	elif tip == "TIPS: 眠いですわ…":
+		status = discord.Status.idle
 	else:
 		status = discord.Status.online
 	await client.change_presence(status=status, activity=game)
