@@ -284,7 +284,7 @@ async def on_message(message):
 							)
 						elif exp <= 0:
 							level -= 1
-							exp = max(0, exp - 350 * (level - 1))
+							exp = max(0, 350 * level + exp)
 							await client.get_channel(1208722087032651816).send(
 								f"😢 **{message.author.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
 								silent=nolevelUpNotifyFlag
