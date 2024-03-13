@@ -134,7 +134,6 @@ async def update_member_data(connection, user_id, exp, level, coin, nolevelUpNot
 async def setup_hook():
 	print("Ready!")
 	await tree.sync()
-	await client.get_guild(1208388325954560071).get_channel(1208388344044593192).send(f"{client.user.mention} が再起動しました。そのまま5分程度お待ち下さい...")
 
 @client.event
 async def on_ready():
@@ -151,6 +150,7 @@ async def on_ready():
 	minute_random_five_hiragana.start()
 	hour.start()
 	spla3.start()
+	await client.get_guild(1208388325954560071).get_channel(1208388344044593192).send(f"{client.user.mention} が再起動しました。そのまま5分程度お待ち下さい。")
 
 @client.event
 async def on_member_update(before, after):
