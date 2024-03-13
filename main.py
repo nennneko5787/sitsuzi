@@ -670,7 +670,7 @@ async def change():
 		"TIPS: 今は邪魔してほしくないですわ...",
 	]
 	tips.append(f"TIPS: TIPSは全部で{len(tips)+1}個存在しますわ！")
-	tip = random.choices(tips)
+	tip = random.choice(tips)
 	game = discord.Game(tip)
 	if tip == "TIPS: 今は邪魔してほしくないですわ...":
 		status = discord.Status.dnd	#do not disturb
