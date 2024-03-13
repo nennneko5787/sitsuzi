@@ -297,7 +297,7 @@ async def on_message(message):
 
 		if message.channel.id == 1208943057483862016:
 			if client.get_guild(1208388325954560071).get_role(1214535217981685790) in message.role_mentions:
-				野獣語録 = [
+				yajyuu = [
 					"頭に来ますよ～",
 					"暴れるなよ・・・暴れるな・・・",
 					"いいよ！来いよ！胸にかけて胸に！",
@@ -357,7 +357,7 @@ async def on_message(message):
 					"やりますねぇ！",
 					"ンアッー！",
 				]
-				msg = random.choice(野獣語録)
+				msg = random.choice(yajyuu)
 				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
 				await message.reply(embed=embed)
 
