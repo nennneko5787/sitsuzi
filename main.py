@@ -379,22 +379,19 @@ async def on_message(message):
 				# チャットを開始
 				chat_rooms[message.author.id] = model.start_chat(history=[])
 
-			msg = await message.reply("私は今返答を考えているところです...")
-			try:
-				# プロンプト
-				prompt = global_prom_1
+			async with message.channel.typing():
+				try:
+					# プロンプト
+					prompt = global_prom_1
 
-				# Gemini APIを使って応答を生成 (非同期で実行)
-				response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt, stream=True)
+					# Gemini APIを使って応答を生成 (非同期で実行)
+					response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt, stream=True)
 
-				text = ""
-				for chunk in response:
-					text = text + chunk.text
-					await msg.edit(content=text)
-			except:
-				traceback_info = traceback.format_exc()
-				text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
-				await msg.edit(content=text)
+					await message.reply(response.text)
+				except:
+					traceback_info = traceback.format_exc()
+					text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+					await message.reply(text)
 
 	elif message.channel.id == 1209487653310046248:
 		if message.content == "ボケて":
