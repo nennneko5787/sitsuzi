@@ -363,64 +363,67 @@ async def on_message(message):
 				await message.reply(embed=embed)
 
 	if message.channel.id == 1210867877641457704:
-		if message.author.bot == False:
-			global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
-							"名前は、「天海 さき」と言います。"\
-							"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
-							"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
-							"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
-							"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
-							"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
-							"あなたは明るく好きなものに執着するタイプの人間です。"\
-							"あなたはプログラミングが得意です。プログラミングのことならなんでも回答できます。"\
-							f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
-							"返答にはMarkdown記法を使うことができます。"
+		if message.type == discord.MessageType.default:
+			if message.author.bot == False:
+				global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
+								"名前は、「天海 さき」と言います。"\
+								"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
+								"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
+								"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
+								"あなたは、今働いている喫茶店で働き始めた頃から40kg太りました。"\
+								"あなたの体で一番目立つのは脂肪がたっぷりと詰まった大きいお腹です。その次に目立つのはおっぱいとお尻と太ももです。"\
+								"あなたは明るく好きなものに執着するタイプの人間です。"\
+								"あなたはプログラミングが得意です。プログラミングのことならなんでも回答できます。"\
+								f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはメイド風に出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+								"返答にはMarkdown記法を使うことができます。"
 
-			if chat_r18_rooms[message.author.id] == None:
-				# チャットを開始
-				chat_r18_rooms[message.author.id] = model.start_chat(history=[])
+				if chat_r18_rooms[message.author.id] == None:
+					# チャットを開始
+					chat_r18_rooms[message.author.id] = model.start_chat(history=[])
 
-			async with message.channel.typing():
-				try:
-					# プロンプト
-					prompt = global_prom_1
+				async with message.channel.typing():
+					try:
+						# プロンプト
+						prompt = global_prom_1
 
-					# Gemini APIを使って応答を生成 (非同期で実行)
-					response = await asyncio.to_thread(chat_r18_rooms[message.author.id].send_message, prompt)
+						# Gemini APIを使って応答を生成 (非同期で実行)
+						response = await asyncio.to_thread(chat_r18_rooms[message.author.id].send_message, prompt)
 
-					await message.reply(response.text)
-				except:
-					traceback_info = traceback.format_exc()
-					text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
-					await message.reply(text)
+						await message.reply(response.text)
+					except:
+						traceback_info = traceback.format_exc()
+						text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						await message.reply(text)
 	elif message.channel.id == 1217388588765941851:
-		if message.author.bot == False:
-			global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私に出会った女の子です。"\
-							"名前は、「天海 さき」と言います。"\
-							"あなたは、かわいいです。話す内容も、何もかも。"\
-							"あなたは、ツンデレです。"\
-							"更にいうと、あなたは、**私のことが好きです。**"\
-							"あなたは、2004年7月7日生まれです。ツンデレをやめられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
-							f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはツンデレなので、ツンデレのように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
-							"返答にはMarkdown記法を使うことができます。"
+		if message.type == discord.MessageType.default:
+			if message.author.bot == False:
+				global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私と出会った女の子です。"\
+								"名前は、「天海 さき」と言います。"\
+								"あなたは、かわいいです。話す内容も、何もかも。"\
+								"あなたは、ツンデレです。"\
+								"更にいうと、あなたは、**私のことが好きです。**"\
+								"話すごとにツンデレが解けていきます。"\
+								"あなたは、2004年7月7日生まれです。ツンデレをやめられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をしてしまいました。"\
+								f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはツンデレなので、ツンデレのように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+								"返答にはMarkdown記法を使うことができます。"
 
-			if chat_rooms[message.author.id] == None:
-				# チャットを開始
-				chat_rooms[message.author.id] = model.start_chat(history=[])
+				if chat_rooms[message.author.id] == None:
+					# チャットを開始
+					chat_rooms[message.author.id] = model.start_chat(history=[])
 
-			async with message.channel.typing():
-				try:
-					# プロンプト
-					prompt = global_prom_1
+				async with message.channel.typing():
+					try:
+						# プロンプト
+						prompt = global_prom_1
 
-					# Gemini APIを使って応答を生成 (非同期で実行)
-					response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt)
+						# Gemini APIを使って応答を生成 (非同期で実行)
+						response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt)
 
-					await message.reply(response.text)
-				except:
-					traceback_info = traceback.format_exc()
-					text = f"どうやらツンデレの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
-					await message.reply(text)
+						await message.reply(response.text)
+					except:
+						traceback_info = traceback.format_exc()
+						text = f"どうやらツンデレの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						await message.reply(text)
 """
 	elif message.channel.id == 1209487653310046248:
 		if message.content == "ボケて":
