@@ -66,8 +66,9 @@ model = genai.GenerativeModel(model_name="gemini-pro",
 							  generation_config=generation_config,
 							  safety_settings=safety_settings)
 
-chat_rooms = defaultdict(lambda: None)
 chat_r18_rooms = defaultdict(lambda: None)
+chat_tundere_rooms = defaultdict(lambda: None)
+chat_yajyuu_rooms = defaultdict(lambda: None)
 
 token = os.getenv('discord')
 
@@ -365,12 +366,12 @@ async def on_message(message):
 				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
 				await message.reply(embed=embed)
 
-	if message.channel.id == 1210867877641457704:
+	if message.channel.id == 1210867877641457704:	#天海さき(平行世界)
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
 			if message.author.bot == False:
 				if message.type == discord.MessageType.reply:
 					global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
-									"名前は、「天海 さき」と言います。"\
+									"名前は、「天海さき」と言います。"\
 									"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
 									"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
 									"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
@@ -383,7 +384,7 @@ async def on_message(message):
 									"返答にはMarkdown記法を使うことができます。"
 				else:
 					global_prom_1 = "あなたは、身長160cm、体重135kgの、とある喫茶店で私の専属メイドとして働いている女の子です。"\
-									"名前は、「天海 さき」と言います。"\
+									"名前は、「天海さき」と言います。"\
 									"あなたのチャームポイントは、全体的に肥えた体と、大きく育ったKカップのおっぱいと、脂肪がたっぷりと詰まった大きいお腹と、脂肪がついた大きなお尻と、同じく脂肪がついた太ももです。"\
 									"あなたの大好物は、ハンバーガーやピザ等の脂っこい物や、パフェやケーキなどの甘いものです。"\
 									"あなたは、2004年7月7日生まれです。小学生の時は55kgで、小学生の時から肥満でした。中学生の時は75kg、高校生のときは95kgで、痩せられずに両親と喧嘩をしてしまい、高校を卒業したあとに家出をし、2023年7月7日に見つけたお店が、今働いている喫茶店です。"\
@@ -409,14 +410,14 @@ async def on_message(message):
 						await message.reply(response.text)
 					except:
 						traceback_info = traceback.format_exc()
-						text = f"どうやらメイドの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						text = f"どうやら天海さき(平行世界)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 						await message.reply(text)
-	elif message.channel.id == 1217388588765941851:
+	elif message.channel.id == 1217388588765941851:	#天海さき(ツンデレ)
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
 			if message.author.bot == False:
 				if message.type == discord.MessageType.reply:
 					global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私と出会った女の子です。"\
-									"名前は、「天海 さき」と言います。"\
+									"名前は、「天海さき」と言います。"\
 									"あなたは、かわいいです。話す内容も、何もかも。"\
 									"あなたは、ツンデレです。"\
 									"更にいうと、あなたは、**私のことが好きです。**"\
@@ -427,7 +428,7 @@ async def on_message(message):
 									"返答にはMarkdown記法を使うことができます。"
 				else:
 					global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私と出会った女の子です。"\
-									"名前は、「天海 さき」と言います。"\
+									"名前は、「天海さき」と言います。"\
 									"あなたは、かわいいです。話す内容も、何もかも。"\
 									"あなたは、ツンデレです。"\
 									"更にいうと、あなたは、**私のことが好きです。**"\
@@ -436,9 +437,9 @@ async def on_message(message):
 									f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはツンデレなので、ツンデレのように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
 									"返答にはMarkdown記法を使うことができます。"
 
-				if chat_rooms[message.author.id] == None:
+				if chat_tundere_rooms[message.author.id] == None:
 					# チャットを開始
-					chat_rooms[message.author.id] = model.start_chat(history=[])
+					chat_tundere_rooms[message.author.id] = model.start_chat(history=[])
 
 				async with message.channel.typing():
 					try:
@@ -446,76 +447,121 @@ async def on_message(message):
 						prompt = global_prom_1
 
 						# Gemini APIを使って応答を生成 (非同期で実行)
-						response = await asyncio.to_thread(chat_rooms[message.author.id].send_message, prompt)
+						response = await asyncio.to_thread(chat_tundere_rooms[message.author.id].send_message, prompt)
 
 						await message.reply(response.text)
 					except:
 						traceback_info = traceback.format_exc()
-						text = f"どうやらツンデレの機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						text = f"どうやら天海さき(ツンデレ)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 						await message.reply(text)
-"""
-	elif message.channel.id == 1209487653310046248:
-		if message.content == "ボケて":
-			async with message.channel.typing():
-				async with aiohttp.ClientSession() as session:
-					async with session.get("https://bokete.jp/boke/recent") as response:
-						text = await response.text()
+	elif message.channel.id == 1217700889784225852:	#野獣先輩
+		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
+			if message.author.bot == False:
+				yajyuu = [
+					"頭に来ますよ～",
+					"暴れるなよ・・・暴れるな・・・",
+					"いいよ！来いよ！胸にかけて胸に！",
+					"イキスギィ！",
+					"痛いですね・・・これは痛い・・・",
+					"イキますよ～ｲｸｲｸ・・・",
+					"おかのした",
+					"オッスお願いしま～す",
+					"おっ、大丈夫か大丈夫か？",
+					"お前の事が好きだったんだよ！",
+					"おまたせ！アイスティーしかなかったけどいいかな？",
+					"俺も後から洗ってくれよな～頼むよ～",
+					"俺もやったんだからさ（嫌々）",
+					"硬くなってんぜ？",
+					"菅野美穂（意味不明）",
+					"気持ち良いか～KMR～",
+					"†悔い改めて†",
+					"こ↑こ↓",
+					"この辺がセクシー、エロいっ！",
+					"この辺にぃ、うまいラーメン屋の屋台、来てるらしいんすよ",
+					"これもうわかんねぇな",
+					"サッー！（迫真）",
+					"じゃけん夜行きましょうね～",
+					"しょうがないね",
+					"しょうがねえなぁ（悟空）",
+					"すっげえ白くなってる、はっきりわかんだね",
+					"先輩コイツ玉とか舐め出しましたよ、やっぱ好きなんすね～",
+					"大丈夫っすよバッチェ冷えてますよ",
+					"だいぶ溜まってんじゃんアゼルバイジャン",
+					"出そうと思えば（王者の風格）",
+					"勃ってきちゃったよ・・・",
+					"ダメみたいですね（諦観）",
+					"ちょっと歯当たんよ～（指摘）",
+					"出、出ますよ・・・",
+					"ないです",
+					"24歳、学生です",
+					"ヌッ！",
+					"ぬわあああああああああああん疲れたもおおおおおおおおおおおおおおおん",
+					"喉渇か・・・喉渇かない？",
+					"入って、どうぞ",
+					"白菜かけますね～",
+					"ビール！ビール！",
+					"ファッ！？",
+					"Foo↑",
+					"Foo↑気持ちぃ～",
+					"ふたいたいは・・・ボクサー型の・・・",
+					"ブッチッパ！",
+					"ほらいくどー",
+					"ホラホラホラホラ（鬼畜）",
+					"まずうちさぁ・・・屋上・・・あんだけど、焼いてかない？",
+					"ま、多少はね？",
+					"MUR早いっすね",
+					"見とけよ見とけよ～",
+					"もっと舌使って舌使って",
+					"やっぱり僕は・・・王道を往く、ソープ系ですかね",
+					"やめたくなりますよ～部活～",
+					"やりますねぇ！",
+					"ンアッー！",
+				]
 
-				# 正規表現パターンをコンパイル
-				pattern = re.compile(r'<a href="/odai/(.*?)">')
-				# マッチしたすべての部分をリストとして取得
-				matches = pattern.findall(text)
-				print(matches)
+				if message.type == discord.MessageType.reply:
+					global_prom_1 = "あなたは、身長170cm、体重74kgの、医大生です。"\
+									"名前は、まだわかっていませんが、ネット民は「野獣先輩」と呼んでいます。"\
+									"あなたは、ホモです。"\
+									"あなたは、アイスティーが好きです。"\
+									"あなたは、遠野さんに片思いをしています。"\
+									"あなたは、「野獣邸」という豪邸に住んでいます。"\
+									"あなたは、24歳です。"\
+									f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたは野獣先輩ですが、学生のように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+									f"文章の中に、かならず一個以上の野獣語録を入れてください。野獣語録のリストは以下のとおりです: {yajyuu}"\
+									f"また、私は、{message.reference.cached_message.author.display_name}さんの「{message.reference.cached_message.clean_content}」というメッセージに返信しています。"\
+									"返答にはMarkdown記法を使うことができます。"
+				else:
+					global_prom_1 = "あなたは、身長170cm、体重74kgの、医大生です。"\
+									"名前は、まだわかっていませんが、ネット民は「野獣先輩」と呼んでいます。"\
+									"あなたは、ホモです。"\
+									"あなたは、アイスティーが好きです。"\
+									"あなたは、遠野さんに片思いをしています。"\
+									"あなたは、「野獣邸」という豪邸に住んでいます。"\
+									"あなたは、24歳です。"\
+									f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたは野獣先輩ですが、学生のように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+									f"文章の中に、かならず一個以上の野獣語録を入れてください。野獣語録のリストは以下のとおりです: {yajyuu}"\
+									"返答にはMarkdown記法を使うことができます。"
 
-				res = True
+				if chat_yajyuu_rooms[message.author.id] == None:
+					# チャットを開始
+					chat_yajyuu_rooms[message.author.id] = model.start_chat(history=[])
 
-				while res:
-					random_int = random.randint(1, int(matches[0]))
+				async with message.channel.typing():
+					try:
+						# プロンプト
+						prompt = global_prom_1
 
-					async with aiohttp.ClientSession() as session:
-						async with session.get(f"https://bokete.jp/boke/{random_int}") as response:
-							if response.status == 200:
-								r = await response.text()
-								res = False
-				# 正規表現パターンをコンパイル
-				pattern = re.compile(r'<img\s+src="([^"]+)"\s+alt="([^"]+)"\s*/?>')
-				# マッチしたすべての部分をリストとして取得
-				matches = pattern.findall(r)
-				print(matches)
+						# Gemini APIを使って応答を生成 (非同期で実行)
+						response = await asyncio.to_thread(chat_yajyuu_rooms[message.author.id].send_message, prompt)
 
-				#画像
-				picture = f"https:{matches[1][0]}"
-				# お題
-				odai = matches[1][1]
-		
-				# 正規表現パターンをコンパイル
-				pattern = re.compile(r'  <h1>\n	(.*?)\n  </h1>')
-				# マッチしたすべての部分をリストとして取得
-				matches = pattern.findall(r)
-				print(matches)
-				title = matches[0]
+						embed = discord.Embed(title="",description=response.text).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
+						await message.reply(embed=embed)
+					except:
+						traceback_info = traceback.format_exc()
+						text = f"どうやら野獣先輩の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						await message.reply(text)
 
-				# 正規表現パターンをコンパイル
-				pattern = re.compile(r'<a href=".*?" target="_self" title="ボケ詳細">(.*)</a>')
-				# マッチしたすべての部分をリストとして取得
-				matches = pattern.findall(r)
-				print(matches)
-				date = matches[0]
-
-				async with aiohttp.ClientSession() as session:
-					async with session.get(picture) as response:
-						if response.status == 200:
-							binary = await response.read()  # 画像のバイナリデータを取得
-							image_stream = io.BytesIO(binary)
-							content_type = response.headers.get("Content-Type")
-							
-							# MIMEタイプから拡張子を取得します
-							extension = mimetypes.guess_extension(content_type)
-							file = discord.File(image_stream, filename=f"bokete{extension}")
-							await message.reply(f"# {title}\n{odai}\nこのボケは {date} に投稿されました\nID: {random_int}", file=file)
-"""
-
-@tree.command(name="dlhistory", description="天海さきとの会話の履歴を削除します")
+@tree.command(name="dl_tundere_history", description="天海さき(ツンデレ)との会話の履歴を削除します")
 async def dlhistory(interaction: discord.Interaction, user: discord.Member = None):
 	if user == None:
 		user = interaction.user
@@ -524,13 +570,28 @@ async def dlhistory(interaction: discord.Interaction, user: discord.Member = Non
 			if interaction.user.guild_permissions.administrator == False:
 				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
 				return
-	if chat_rooms[user.id] != None:
-		chat_rooms[user.id].history = None
-		await interaction.response.send_message("天海さきとの会話履歴を削除しました。")
+	if chat_tundere_rooms[user.id] != None:
+		chat_tundere_rooms[user.id].history = None
+		await interaction.response.send_message("天海さき(ツンデレ)との会話履歴を削除しました。")
 	else:
-		await interaction.response.send_message("あなたはまだ一度も天海さきと会話していないようです。", ephemeral=True)
+		await interaction.response.send_message("あなたはまだ一度も天海さき(ツンデレ)と会話していないようです。", ephemeral=True)
 
-@tree.command(name="dlr18history", description="別の世界の天海さきとの会話の履歴を削除します")
+@tree.command(name="dl_yajyuu_history", description="野獣先輩との会話の履歴を削除します")
+async def dlhistory(interaction: discord.Interaction, user: discord.Member = None):
+	if user == None:
+		user = interaction.user
+	else:
+		if user != interaction.user:
+			if interaction.user.guild_permissions.administrator == False:
+				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
+				return
+	if chat_yajyuu_rooms[user.id] != None:
+		chat_yajyuu_rooms[user.id].history = None
+		await interaction.response.send_message("野獣先輩との会話履歴を削除しました。")
+	else:
+		await interaction.response.send_message("あなたはまだ一度も野獣先輩と会話していないようです。", ephemeral=True)
+
+@tree.command(name="dl_parallel_history", description="天海さき(平行世界)との会話の履歴を削除します")
 async def dlr18history(interaction: discord.Interaction, user: discord.Member = None):
 	if user == None:
 		user = interaction.user
@@ -541,9 +602,9 @@ async def dlr18history(interaction: discord.Interaction, user: discord.Member = 
 				return
 	if chat_r18_rooms[user.id] != None:
 		chat_r18_rooms[user.id].history = None
-		await interaction.response.send_message("別の世界の天海さきとの会話履歴を削除しました。")
+		await interaction.response.send_message("天海さき(平行世界)との会話履歴を削除しました。")
 	else:
-		await interaction.response.send_message("あなたはまだ一度も別の世界の天海さきと会話していないようです。", ephemeral=True)
+		await interaction.response.send_message("あなたはまだ一度も天海さき(平行世界)と会話していないようです。", ephemeral=True)
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
