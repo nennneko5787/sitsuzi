@@ -364,7 +364,7 @@ async def on_message(message):
 		if message.channel.id == 1208943057483862016:
 			if client.get_guild(1208388325954560071).get_role(1214535217981685790) in message.role_mentions:
 				msg = random.choice(yajyuu)
-				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png",color=discord.Color.from_rgb(116,49,49))
+				embed = discord.Embed(title="",description=msg,color=discord.Color.from_rgb(116,49,49)).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
 				await message.reply(embed=embed)
 
 	if message.channel.id == 1210867877641457704:	#天海さき(パラレルⅠ)
@@ -492,7 +492,7 @@ async def on_message(message):
 						# Gemini APIを使って応答を生成 (非同期で実行)
 						response = await asyncio.to_thread(chat_yajyuu_rooms[message.author.id].send_message, prompt)
 
-						embed = discord.Embed(title="",description=response.text).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png",color=discord.Color.from_rgb(116,49,49))
+						embed = discord.Embed(title="",description=response.text,color=discord.Color.from_rgb(116,49,49)).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
 						await message.reply(embed=embed)
 					except:
 						traceback_info = traceback.format_exc()
