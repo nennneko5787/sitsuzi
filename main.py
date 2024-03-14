@@ -1,4 +1,4 @@
-# 執事鯖のボット
+# 執事鯖のボットです
 
 import os
 import discord
@@ -153,6 +153,7 @@ async def on_ready():
 	spla3.start()
 	change.start()
 	await client.get_guild(1208388325954560071).get_channel(1208388344044593192).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
+	await client.application.edit(description=f"{client.get_guild(1208388325954560071).name} に居るねんねこ㌨( <@1048448686914551879> )のメイドです！！\nなんでもできます！！\n※バージョンは`{os.getenv('RENDER_GIT_COMMIT')}`です。",reason="バージョンアップ")
 
 @client.event
 async def on_member_update(before, after):
@@ -723,14 +724,18 @@ async def change():
 		"TIPS: 毎日 @ログインボーナス ロールにメンションして経験値とsʜɪᴛsᴜᴢɪ ᴄᴏɪɴを獲得するのですわ！",
 		"TIPS: @ガチャ ロールにメンションすれば経験値を獲得できますわ！(sʜɪᴛsᴜᴢɪ ᴄᴏɪɴが20枚必要ですわ！)",
 		"TIPS: このTIPSは20秒ごとに切り替わりますわ！",
-		"TIPS: 私のご主人さまは ねんねこ㌨( @nennneko5787 ) ですわ！(このTIPSもご主人さまが考えたんですよ！)",
+		"TIPS: 私のご主人様は ねんねこ㌨様( @nennneko5787 ) ですわ！(このTIPSもご主人様が考えたんですよ！)",
 		"TIPS: ご主人さまは中学1年生ですわ！(2024年から2年生ですわ！)",
 		f"TIPS: 運営は{len(client.get_guild(1208388325954560071).get_role(1210166744472092702).members)}人いますわ！",
-		"TIPS: 私は render.com っていうサーバーで動いているみたいですわ🤔(今はMi-aもこのサーバーで動いてるらしい)",
-		"TIPS: 今は邪魔してほしくないですわ...",
-		"TIPS: 眠いですわ…",
+		"TIPS: 私は render.com っていうサーバーで動いているみたいですわ🤔(今はMi-aもこのサーバーで動いてるらしいですわ！)",
+		"TIPS: 今は邪魔してほしくないですわ...邪魔したらどうなるかわかってるでしょうね...?",
+		"TIPS: 眠いですわ...おやすみなさい...",
+		"TIPS: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+		f"TIPS: 認証済みメンバーは{len(client.get_guild(1208388325954560071).get_role(1208388351372169256).members)}人いますわ！",
+		f"TIPS: 認証していないメンバーは{len([m for m in client.get_guild(1208388325954560071).members if not m.bot]) - len(client.get_guild(1208388325954560071).get_role(1208388351372169256).members)}人いますわ！",
+		f"TIPS: {generate_hiragana(20)}"
 	]
-	tips.append(f"TIPS: TIPSは全部で{len(tips)+1}個存在しますわ！")
+	tips.append(f"TIPS: TIPSは全部で{len(tips)+1}種類存在しますわ！")
 	tip = random.choice(tips)
 	game = discord.Game(tip)
 	if tip == "TIPS: 今は邪魔してほしくないですわ...":
