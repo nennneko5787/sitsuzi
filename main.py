@@ -25,6 +25,7 @@ import datetime
 from zoneinfo import ZoneInfo
 import random
 import asyncpg
+import psutil
 import sys
 sys.set_int_max_str_digits(0)
 
@@ -599,7 +600,12 @@ async def delete_parallel_1_history(interaction: discord.Interaction, user: disc
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
-	await interaction.response.send_message(f"🏓Pong! Ping: {client.latency}ms")
+	ping = client.latency
+	cpu_percent = psutil.cpu_percent()
+	mem = psutil.virtual_memory() 
+	embed = discord.Embed(title="Ping", description=f"Ping : {ping}ms\nCPU : {cpu_percent}%\nMemory : {mem.percent}%")
+	embed.set_thumbnail(url=client.user.display_avatar.url)
+	await interaction.response.send_message(embed=embed)
 
 async def get_all_member_data(connection, page, per_page):
 	offset = (page - 1) * per_page

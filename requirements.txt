@@ -5,3 +5,4 @@ twikit
 Misskey.py
 python-dotenv
 asyncpg
+psutil
