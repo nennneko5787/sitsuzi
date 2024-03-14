@@ -727,12 +727,9 @@ async def change():
 		"TIPS: ご主人さまは中学1年生ですわ！(2024年から2年生ですわ！)",
 		f"TIPS: 運営は{len(client.get_guild(1208388325954560071).get_role(1210166744472092702).members)}人いますわ！",
 		"TIPS: 私は render.com っていうサーバーで動いているみたいですわ🤔(今はMi-aもこのサーバーで動いてるらしいですわ！)",
-		"TIPS: 今は邪魔してほしくないですわ...邪魔したらどうなるかわかってるでしょうね...?",
-		"TIPS: 眠いですわ...おやすみなさい...",
-		"TIPS: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-		f"TIPS: 認証済みメンバーは{len(client.get_guild(1208388325954560071).get_role(1208388351372169256).members)}人いますわ！",
-		f"TIPS: 認証していないメンバーは{len([m for m in client.get_guild(1208388325954560071).members if not m.bot]) - len(client.get_guild(1208388325954560071).get_role(1208388351372169256).members)}人いますわ！",
-		f"TIPS: {generate_hiragana(20)}"
+		"今は邪魔してほしくないですわ...邪魔したらどうなるかわかってるでしょうね...?",
+		"眠いですわ...おやすみなさい...",
+		"TIPS: 認証済みメンバーの方々はイベントを自由に作ったり消したりできますわよ！",
 	]
 	tips.append(f"TIPS: TIPSは全部で{len(tips)+1}種類存在しますわ！")
 	tip = random.choice(tips)
