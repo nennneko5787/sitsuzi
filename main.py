@@ -68,6 +68,7 @@ model = genai.GenerativeModel(model_name="gemini-pro",
 
 chat_r18_rooms = defaultdict(lambda: None)
 chat_tundere_rooms = defaultdict(lambda: None)
+chat_inkya_rooms = defaultdict(lambda: None)
 chat_yajyuu_rooms = defaultdict(lambda: None)
 
 token = os.getenv('discord')
@@ -450,6 +451,46 @@ async def on_message(message):
 						traceback_info = traceback.format_exc()
 						text = f"どうやら天海さき(ツンデレ)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 						await message.reply(text)
+	elif message.channel.id == 1217388588765941851:	#天海さき(陰キャ)
+		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
+			if message.author.bot == False:
+				if message.type == discord.MessageType.reply:
+					global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私と出会った女の子です。"\
+									"名前は、「天海さき」と言います。"\
+									"あなたは、陰キャです。"\
+									"あなたは、陰キャですが、かわいいです。話す内容も、何もかも。"\
+									"更にいうと、あなたは、**私のことが好きです。**"\
+									"あなたは、2004年7月7日生まれです。普通に高校を卒業しました。"\
+									f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたはツンデレなので、ツンデレのように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+									f"また、私は、{message.reference.cached_message.author.display_name}さんの「{message.reference.cached_message.clean_content}」というメッセージに返信しています。"\
+									"返答にはMarkdown記法を使うことができます。"
+				else:
+					global_prom_1 = "あなたは、身長160cm、体重50kgの、とある喫茶店で私と出会った女の子です。"\
+									"名前は、「天海さき」と言います。"\
+									"あなたは、陰キャです。"\
+									"あなたは、陰キャですが、かわいいです。話す内容も、何もかも。"\
+									"更にいうと、あなたは、**私のことが好きです。**"\
+									"あなたは、2004年7月7日生まれです。普通に高校を卒業しました。"\
+									f"私の名前は{message.author.display_name}です。私はあなたに「{message.clean_content}」と話しました。あなたは陰キャなので、陰キャのように出力しなければなりません。人と話すときと同じように出力してください。文法的に誤りのある文は認められません。"\
+									"返答にはMarkdown記法を使うことができます。"
+
+				if chat_inkya_rooms[message.author.id] == None:
+					# チャットを開始
+					chat_inkya_rooms[message.author.id] = model.start_chat(history=[])
+
+				async with message.channel.typing():
+					try:
+						# プロンプト
+						prompt = global_prom_1
+
+						# Gemini APIを使って応答を生成 (非同期で実行)
+						response = await asyncio.to_thread(chat_inkya_rooms[message.author.id].send_message, prompt)
+
+						await message.reply(response.text)
+					except:
+						traceback_info = traceback.format_exc()
+						text = f"どうやら天海さき(陰キャ)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						await message.reply(text)
 	elif message.channel.id == 1217700889784225852:	#野獣先輩
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
 			if message.author.bot == False:
@@ -501,6 +542,7 @@ async def on_message(message):
 	chara=[
 		discord.app_commands.Choice(name="野獣先輩",value="yajyuu"),
 		discord.app_commands.Choice(name="天海さき(ツンデレ)",value="tundere"),
+		discord.app_commands.Choice(name="天海さき(陰キャ)",value="inkya"),
 		discord.app_commands.Choice(name="天海さき(パラレルⅠ)",value="parallel_1"),
 	]
 )
@@ -517,11 +559,13 @@ async def delhistory(interaction: discord.Interaction, chara: str, user: discord
 				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
 				return
 	if chara == "yajyuu":
-		delete_yajyuu_history(interaction, user)
+		await delete_yajyuu_history(interaction, user)
 	elif chara == "tundere":
-		delete_tundere_history(interaction, user)
+		await delete_tundere_history(interaction, user)
+	elif chara == "inkya":
+		await delete_inkya_history(interaction, user)
 	elif chara == "parallel_1":
-		delete_parallel_1_history(interaction, user)
+		await delete_parallel_1_history(interaction, user)
 	else:
 		await interaction.response.send_message(f"エラー。なんかよくわからないキャラクターを選択してるよ。改造かなぁ？\n<@1208388325954560071>\n```\nキャラクター={chara}```")
 
@@ -529,6 +573,13 @@ async def delete_tundere_history(interaction: discord.Interaction, user: discord
 	if chat_tundere_rooms[user.id] != None:
 		chat_tundere_rooms[user.id].history = None
 		await interaction.response.send_message("天海さき(ツンデレ)との会話履歴を削除しました。")
+	else:
+		await interaction.response.send_message("あなたはまだ一度も天海さき(ツンデレ)と会話していないようです。", ephemeral=True)
+
+async def delete_inkya_history(interaction: discord.Interaction, user: discord.Member = None):
+	if chat_inkya_rooms[user.id] != None:
+		chat_inkya_rooms[user.id].history = None
+		await interaction.response.send_message("天海さき(陰キャ)との会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度も天海さき(ツンデレ)と会話していないようです。", ephemeral=True)
 
