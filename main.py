@@ -734,9 +734,9 @@ async def change():
 	tips.append(f"TIPS: TIPSは全部で{len(tips)+1}種類存在しますわ！")
 	tip = random.choice(tips)
 	game = discord.Game(tip)
-	if tip == "TIPS: 今は邪魔してほしくないですわ...":
+	if tip == "今は邪魔してほしくないですわ...":
 		status = discord.Status.dnd	#do not disturb
-	elif tip == "TIPS: 眠いですわ…":
+	elif tip == "眠いですわ…":
 		status = discord.Status.idle
 	else:
 		status = discord.Status.online
