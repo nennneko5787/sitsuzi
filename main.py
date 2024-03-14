@@ -210,7 +210,7 @@ async def on_ready():
 	hour.start()
 	spla3.start()
 	change.start()
-	if os.getenv("RENDER") == "TRUE":
+	if os.getenv("RENDER") != "aaa":
 		await client.get_guild(1208388325954560071).get_channel(1208388344044593192).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
 		appinfo = await client.application_info()
 		await appinfo.edit(description=f"{client.get_guild(1208388325954560071).name} に居るねんねこ㌨( <@1048448686914551879> )のメイドです！！\nなんでもできます！！\n※バージョンは`{os.getenv('RENDER_GIT_COMMIT')}`です。",reason="バージョンアップ")
