@@ -451,7 +451,7 @@ async def on_message(message):
 						traceback_info = traceback.format_exc()
 						text = f"どうやら天海さき(ツンデレ)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 						await message.reply(text)
-	elif message.channel.id == 1217388588765941851:	#天海さき(陰キャ)
+	elif message.channel.id == 1217739855967162408:	#天海さき(陰キャ)
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
 			if message.author.bot == False:
 				if message.type == discord.MessageType.reply:
@@ -710,8 +710,9 @@ async def mcstart(interaction: discord.Interaction):
 @tasks.loop(seconds=20)
 async def change():
 	tips = [
-		"TIPS: #ツンデレ チャンネルではツンデレしてますわよ！",
-		"TIPS: #別の世界の天海さき には近づかないほうがいいかもしれないですわね...",
+		"TIPS: #天海さき（ツンデレ） チャンネルではツンデレしてますわよ！",
+		"TIPS: #天海さき（陰キャ） チャンネルでは陰キャです。はい...",
+		"TIPS: #天海さき（平行世界ⅰ） には近づかないほうがいいかもしれないですわね...",
 		"TIPS: 🔞R18系チャンネルでは私のレベリングシステムの他にProbotのレベリングシステムも有効になりますわ！",
 		"TIPS: 毎日 @ログインボーナス ロールにメンションして経験値とsʜɪᴛsᴜᴢɪ ᴄᴏɪɴを獲得するのですわ！",
 		"TIPS: @ガチャ ロールにメンションすれば経験値を獲得できますわ！(sʜɪᴛsᴜᴢɪ ᴄᴏɪɴが20枚必要ですわ！)",
