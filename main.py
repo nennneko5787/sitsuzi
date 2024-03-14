@@ -509,7 +509,7 @@ async def on_message(message):
 )
 @discord.app_commands.rename(
 	chara="キャラクター",
-	user="対象ユーザー(権限持ちのみ選択可能)"
+	user="対象ユーザー"
 )
 async def delhistory(interaction: discord.Interaction, chara: str, user: discord.Member = None):
 	if user == None:
