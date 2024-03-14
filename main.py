@@ -86,14 +86,72 @@ twitxt = ""
 
 misskey = Misskey(address="https://misskey.io/", i=os.getenv("misskey"))
 
+yajyuu = [
+	"頭に来ますよ～",
+	"暴れるなよ・・・暴れるな・・・",
+	"いいよ！来いよ！胸にかけて胸に！",
+	"イキスギィ！",
+	"痛いですね・・・これは痛い・・・",
+	"イキますよ～ｲｸｲｸ・・・",
+	"おかのした",
+	"オッスお願いしま～す",
+	"おっ、大丈夫か大丈夫か？",
+	"お前の事が好きだったんだよ！",
+	"おまたせ！アイスティーしかなかったけどいいかな？",
+	"俺も後から洗ってくれよな～頼むよ～",
+	"俺もやったんだからさ（嫌々）",
+	"硬くなってんぜ？",
+	"菅野美穂（意味不明）",
+	"気持ち良いか～KMR～",
+	"†悔い改めて†",
+	"こ↑こ↓",
+	"この辺がセクシー、エロいっ！",
+	"この辺にぃ、うまいラーメン屋の屋台、来てるらしいんすよ",
+	"これもうわかんねぇな",
+	"サッー！（迫真）",
+	"じゃけん夜行きましょうね～",
+	"しょうがないね",
+	"しょうがねえなぁ（悟空）",
+	"すっげえ白くなってる、はっきりわかんだね",
+	"先輩コイツ玉とか舐め出しましたよ、やっぱ好きなんすね～",
+	"大丈夫っすよバッチェ冷えてますよ",
+	"だいぶ溜まってんじゃんアゼルバイジャン",
+	"出そうと思えば（王者の風格）",
+	"勃ってきちゃったよ・・・",
+	"ダメみたいですね（諦観）",
+	"ちょっと歯当たんよ～（指摘）",
+	"出、出ますよ・・・",
+	"ないです",
+	"24歳、学生です",
+	"ヌッ！",
+	"ぬわあああああああああああん疲れたもおおおおおおおおおおおおおおおん",
+	"喉渇か・・・喉渇かない？",
+	"入って、どうぞ",
+	"白菜かけますね～",
+	"ビール！ビール！",
+	"ファッ！？",
+	"Foo↑",
+	"Foo↑気持ちぃ～",
+	"ふたいたいは・・・ボクサー型の・・・",
+	"ブッチッパ！",
+	"ほらいくどー",
+	"ホラホラホラホラ（鬼畜）",
+	"まずうちさぁ・・・屋上・・・あんだけど、焼いてかない？",
+	"ま、多少はね？",
+	"MUR早いっすね",
+	"見とけよ見とけよ～",
+	"もっと舌使って舌使って",
+	"やっぱり僕は・・・王道を往く、ソープ系ですかね",
+	"やめたくなりますよ～部活～",
+	"やりますねぇ！",
+	"ンアッー！",
+]
 
 # Database configuration
 DATABASE_URL = os.getenv("DATABASE_URL")
 
-
 async def connect_to_database():
 	return await asyncpg.connect(DATABASE_URL)
-
 
 async def create_tables(connection):
 	await connection.execute(
@@ -152,8 +210,10 @@ async def on_ready():
 	hour.start()
 	spla3.start()
 	change.start()
-	await client.get_guild(1208388325954560071).get_channel(1208388344044593192).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
-	await client.application.edit(description=f"{client.get_guild(1208388325954560071).name} に居るねんねこ㌨( <@1048448686914551879> )のメイドです！！\nなんでもできます！！\n※バージョンは`{os.getenv('RENDER_GIT_COMMIT')}`です。",reason="バージョンアップ")
+	if os.getenv("RENDER") == "True":
+		await client.get_guild(1208388325954560071).get_channel(1208388344044593192).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
+		appinfo = await client.application_info()
+		await appinfo.edit(description=f"{client.get_guild(1208388325954560071).name} に居るねんねこ㌨( <@1048448686914551879> )のメイドです！！\nなんでもできます！！\n※バージョンは`{os.getenv('RENDER_GIT_COMMIT')}`です。",reason="バージョンアップ")
 
 @client.event
 async def on_member_update(before, after):
@@ -303,71 +363,11 @@ async def on_message(message):
 
 		if message.channel.id == 1208943057483862016:
 			if client.get_guild(1208388325954560071).get_role(1214535217981685790) in message.role_mentions:
-				yajyuu = [
-					"頭に来ますよ～",
-					"暴れるなよ・・・暴れるな・・・",
-					"いいよ！来いよ！胸にかけて胸に！",
-					"イキスギィ！",
-					"痛いですね・・・これは痛い・・・",
-					"イキますよ～ｲｸｲｸ・・・",
-					"おかのした",
-					"オッスお願いしま～す",
-					"おっ、大丈夫か大丈夫か？",
-					"お前の事が好きだったんだよ！",
-					"おまたせ！アイスティーしかなかったけどいいかな？",
-					"俺も後から洗ってくれよな～頼むよ～",
-					"俺もやったんだからさ（嫌々）",
-					"硬くなってんぜ？",
-					"菅野美穂（意味不明）",
-					"気持ち良いか～KMR～",
-					"†悔い改めて†",
-					"こ↑こ↓",
-					"この辺がセクシー、エロいっ！",
-					"この辺にぃ、うまいラーメン屋の屋台、来てるらしいんすよ",
-					"これもうわかんねぇな",
-					"サッー！（迫真）",
-					"じゃけん夜行きましょうね～",
-					"しょうがないね",
-					"しょうがねえなぁ（悟空）",
-					"すっげえ白くなってる、はっきりわかんだね",
-					"先輩コイツ玉とか舐め出しましたよ、やっぱ好きなんすね～",
-					"大丈夫っすよバッチェ冷えてますよ",
-					"だいぶ溜まってんじゃんアゼルバイジャン",
-					"出そうと思えば（王者の風格）",
-					"勃ってきちゃったよ・・・",
-					"ダメみたいですね（諦観）",
-					"ちょっと歯当たんよ～（指摘）",
-					"出、出ますよ・・・",
-					"ないです",
-					"24歳、学生です",
-					"ヌッ！",
-					"ぬわあああああああああああん疲れたもおおおおおおおおおおおおおおおん",
-					"喉渇か・・・喉渇かない？",
-					"入って、どうぞ",
-					"白菜かけますね～",
-					"ビール！ビール！",
-					"ファッ！？",
-					"Foo↑",
-					"Foo↑気持ちぃ～",
-					"ふたいたいは・・・ボクサー型の・・・",
-					"ブッチッパ！",
-					"ほらいくどー",
-					"ホラホラホラホラ（鬼畜）",
-					"まずうちさぁ・・・屋上・・・あんだけど、焼いてかない？",
-					"ま、多少はね？",
-					"MUR早いっすね",
-					"見とけよ見とけよ～",
-					"もっと舌使って舌使って",
-					"やっぱり僕は・・・王道を往く、ソープ系ですかね",
-					"やめたくなりますよ～部活～",
-					"やりますねぇ！",
-					"ンアッー！",
-				]
 				msg = random.choice(yajyuu)
-				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
+				embed = discord.Embed(title="",description=msg).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png",color=discord.Color.from_rgb(116,49,49))
 				await message.reply(embed=embed)
 
-	if message.channel.id == 1210867877641457704:	#天海さき(平行世界)
+	if message.channel.id == 1210867877641457704:	#天海さき(パラレルⅠ)
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
 			if message.author.bot == False:
 				if message.type == discord.MessageType.reply:
@@ -411,7 +411,7 @@ async def on_message(message):
 						await message.reply(response.text)
 					except:
 						traceback_info = traceback.format_exc()
-						text = f"どうやら天海さき(平行世界)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
+						text = f"どうやら天海さき(パラレルⅠ)の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 						await message.reply(text)
 	elif message.channel.id == 1217388588765941851:	#天海さき(ツンデレ)
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
@@ -456,70 +456,9 @@ async def on_message(message):
 	elif message.channel.id == 1217700889784225852:	#野獣先輩
 		if message.type == discord.MessageType.default or message.type == discord.MessageType.reply:
 			if message.author.bot == False:
-				yajyuu = [
-					"頭に来ますよ～",
-					"暴れるなよ・・・暴れるな・・・",
-					"いいよ！来いよ！胸にかけて胸に！",
-					"イキスギィ！",
-					"痛いですね・・・これは痛い・・・",
-					"イキますよ～ｲｸｲｸ・・・",
-					"おかのした",
-					"オッスお願いしま～す",
-					"おっ、大丈夫か大丈夫か？",
-					"お前の事が好きだったんだよ！",
-					"おまたせ！アイスティーしかなかったけどいいかな？",
-					"俺も後から洗ってくれよな～頼むよ～",
-					"俺もやったんだからさ（嫌々）",
-					"硬くなってんぜ？",
-					"菅野美穂（意味不明）",
-					"気持ち良いか～KMR～",
-					"†悔い改めて†",
-					"こ↑こ↓",
-					"この辺がセクシー、エロいっ！",
-					"この辺にぃ、うまいラーメン屋の屋台、来てるらしいんすよ",
-					"これもうわかんねぇな",
-					"サッー！（迫真）",
-					"じゃけん夜行きましょうね～",
-					"しょうがないね",
-					"しょうがねえなぁ（悟空）",
-					"すっげえ白くなってる、はっきりわかんだね",
-					"先輩コイツ玉とか舐め出しましたよ、やっぱ好きなんすね～",
-					"大丈夫っすよバッチェ冷えてますよ",
-					"だいぶ溜まってんじゃんアゼルバイジャン",
-					"出そうと思えば（王者の風格）",
-					"勃ってきちゃったよ・・・",
-					"ダメみたいですね（諦観）",
-					"ちょっと歯当たんよ～（指摘）",
-					"出、出ますよ・・・",
-					"ないです",
-					"24歳、学生です",
-					"ヌッ！",
-					"ぬわあああああああああああん疲れたもおおおおおおおおおおおおおおおん",
-					"喉渇か・・・喉渇かない？",
-					"入って、どうぞ",
-					"白菜かけますね～",
-					"ビール！ビール！",
-					"ファッ！？",
-					"Foo↑",
-					"Foo↑気持ちぃ～",
-					"ふたいたいは・・・ボクサー型の・・・",
-					"ブッチッパ！",
-					"ほらいくどー",
-					"ホラホラホラホラ（鬼畜）",
-					"まずうちさぁ・・・屋上・・・あんだけど、焼いてかない？",
-					"ま、多少はね？",
-					"MUR早いっすね",
-					"見とけよ見とけよ～",
-					"もっと舌使って舌使って",
-					"やっぱり僕は・・・王道を往く、ソープ系ですかね",
-					"やめたくなりますよ～部活～",
-					"やりますねぇ！",
-					"ンアッー！",
-				]
-
 				if message.type == discord.MessageType.reply:
 					global_prom_1 = "あなたは、身長170cm、体重74kgの、医大生です。"\
-									"名前は、まだわかっていませんが、ネット民は「野獣先輩」と呼んでいます。"\
+									"名前は、「田所浩二」です。ネット民は「野獣先輩」と呼んでいます。"\
 									"あなたは、ホモです。"\
 									"あなたは、アイスティーが好きです。"\
 									"あなたは、遠野さんに片思いをしています。"\
@@ -531,7 +470,7 @@ async def on_message(message):
 									"返答にはMarkdown記法を使うことができます。"
 				else:
 					global_prom_1 = "あなたは、身長170cm、体重74kgの、医大生です。"\
-									"名前は、まだわかっていませんが、ネット民は「野獣先輩」と呼んでいます。"\
+									"名前は、「田所浩二」です。ネット民は「野獣先輩」と呼んでいます。"\
 									"あなたは、ホモです。"\
 									"あなたは、アイスティーが好きです。"\
 									"あなたは、遠野さんに片思いをしています。"\
@@ -553,15 +492,26 @@ async def on_message(message):
 						# Gemini APIを使って応答を生成 (非同期で実行)
 						response = await asyncio.to_thread(chat_yajyuu_rooms[message.author.id].send_message, prompt)
 
-						embed = discord.Embed(title="",description=response.text).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png")
+						embed = discord.Embed(title="",description=response.text).set_author(name="野獣先輩", icon_url="https://i.imgur.com/pKpWwtk.png",color=discord.Color.from_rgb(116,49,49))
 						await message.reply(embed=embed)
 					except:
 						traceback_info = traceback.format_exc()
 						text = f"どうやら野獣先輩の機嫌が悪いらしい...\n```\n{traceback_info}\n```"
 						await message.reply(text)
 
-@tree.command(name="dl_tundere_history", description="天海さき(ツンデレ)との会話の履歴を削除します")
-async def dlhistory(interaction: discord.Interaction, user: discord.Member = None):
+@tree.command(name="delhistory", description="いろいろなキャラクターとの会話の履歴を削除します")
+@discord.app_commands.choices(
+	chara=[
+		discord.app_commands.Choice(name="野獣先輩",value="yajyuu"),
+		discord.app_commands.Choice(name="天海さき(ツンデレ)",value="tundere"),
+		discord.app_commands.Choice(name="天海さき(パラレルⅠ)",value="parallel_1"),
+	]
+)
+@discord.app_commands.rename(
+	chara="キャラクター",
+	user="対象ユーザー(権限持ちのみ選択可能)"
+)
+async def delhistory(interaction: discord.Interaction, chara: str, user: discord.Member = None):
 	if user == None:
 		user = interaction.user
 	else:
@@ -569,41 +519,35 @@ async def dlhistory(interaction: discord.Interaction, user: discord.Member = Non
 			if interaction.user.guild_permissions.administrator == False:
 				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
 				return
+	if chara == "yajyuu":
+		delete_yajyuu_history(interaction, user)
+	elif chara == "tundere":
+		delete_tundere_history(interaction, user)
+	elif chara == "parallel_1":
+		delete_parallel_1_history(interaction, user)
+	else:
+		await interaction.response.send_message(f"エラー。なんかよくわからないキャラクターを選択してるよ。改造かなぁ？\n<@1208388325954560071>\n```\nキャラクター={chara}```")
+
+async def delete_tundere_history(interaction: discord.Interaction, user: discord.Member = None):
 	if chat_tundere_rooms[user.id] != None:
 		chat_tundere_rooms[user.id].history = None
 		await interaction.response.send_message("天海さき(ツンデレ)との会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度も天海さき(ツンデレ)と会話していないようです。", ephemeral=True)
 
-@tree.command(name="dl_yajyuu_history", description="野獣先輩との会話の履歴を削除します")
-async def dlhistory(interaction: discord.Interaction, user: discord.Member = None):
-	if user == None:
-		user = interaction.user
-	else:
-		if user != interaction.user:
-			if interaction.user.guild_permissions.administrator == False:
-				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
-				return
+async def delete_yajyuu_history(interaction: discord.Interaction, user: discord.Member = None):
 	if chat_yajyuu_rooms[user.id] != None:
 		chat_yajyuu_rooms[user.id].history = None
 		await interaction.response.send_message("野獣先輩との会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度も野獣先輩と会話していないようです。", ephemeral=True)
 
-@tree.command(name="dl_parallel_history", description="天海さき(平行世界)との会話の履歴を削除します")
-async def dlr18history(interaction: discord.Interaction, user: discord.Member = None):
-	if user == None:
-		user = interaction.user
-	else:
-		if user != interaction.user:
-			if interaction.user.guild_permissions.administrator == False:
-				await interaction.response.send_message("あなたに別のユーザーの会話履歴を削除する権限はありません", ephemeral=True)
-				return
+async def delete_parallel_1_history(interaction: discord.Interaction, user: discord.Member = None):
 	if chat_r18_rooms[user.id] != None:
 		chat_r18_rooms[user.id].history = None
-		await interaction.response.send_message("天海さき(平行世界)との会話履歴を削除しました。")
+		await interaction.response.send_message("天海さき(パラレルⅠ)との会話履歴を削除しました。")
 	else:
-		await interaction.response.send_message("あなたはまだ一度も天海さき(平行世界)と会話していないようです。", ephemeral=True)
+		await interaction.response.send_message("あなたはまだ一度も天海さき(パラレルⅠ)と会話していないようです。", ephemeral=True)
 
 @tree.command(name="ping", description="ping")
 async def ping(interaction: discord.Interaction):
