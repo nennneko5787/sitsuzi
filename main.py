@@ -216,7 +216,8 @@ async def on_ready():
 	change.start()
 	global is_connected
 	if is_connected == False:
-		await client.get_guild(1208388325954560071).get_channel(1218087342397591553).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
+		message = await client.get_guild(1208388325954560071).get_channel(1218087342397591553).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
+		await message.publish()
 		is_connected = True
 
 @client.event
