@@ -637,6 +637,78 @@ async def top(interaction: discord.Interaction, page: int = 1):
 
 	await interaction.followup.send(embed=embed,silent=True)
 
+@tree.command(name="sell", description="経験値をsʜɪᴛsᴜᴢɪ ᴄᴏɪɴに換金します")
+async def sell(interaction: discord.Interaction, amount: int):
+	await interaction.response.defer()
+	user = interaction.user
+	# テーブルからexpの値を取得
+	connection = await connect_to_database()
+	record = await get_member_data(connection, user.id)
+	if record:
+		exp = record["exp"]
+		level = record["level"]
+		coin = record["coin"]
+		nolevelUpNotifyFlag = record["nolevelUpNotifyFlag"]
+	else:
+		exp = 0
+		level = 0
+		coin = 0
+		nolevelUpNotifyFlag = False
+
+	coin += exp * (level * 0.5)
+	exp = 0
+
+	await update_member_data(connection, user.id, exp, level, coin, nolevelUpNotifyFlag)
+
+	await connection.close()
+	embed = discord.Embed(title=f"換金しました。").set_author(name=user.display_name, icon_url=user.display_avatar)
+	await interaction.followup.send(embed=embed)
+
+@tree.command(name="transfer", description="あなたが持っているsʜɪᴛsᴜᴢɪ ᴄᴏɪɴを他の人に譲渡します")
+async def sell(interaction: discord.Interaction, amount: int, to: discord.Member):
+	await interaction.response.defer()
+	user = interaction.user
+	# テーブルからexpの値を取得
+	connection = await connect_to_database()
+	record = await get_member_data(connection, user.id)
+	if record:
+		exp = record["exp"]
+		level = record["level"]
+		coin = record["coin"]
+		nolevelUpNotifyFlag = record["nolevelUpNotifyFlag"]
+	else:
+		exp = 0
+		level = 0
+		coin = 0
+		nolevelUpNotifyFlag = False
+
+	record_to = await get_member_data(connection, to.id)
+	if record_to:
+		exp_to = record_to["exp"]
+		level_to = record_to["level"]
+		coin_to = record_to["coin"]
+		nolevelUpNotifyFlag_to = record_to["nolevelUpNotifyFlag"]
+	else:
+		exp_to = 0
+		level_to = 0
+		coin_to = 0
+		nolevelUpNotifyFlag_to = False
+
+	if coin < amount:
+		await connection.close()
+		embed = discord.Embed(title=f"あなたは、sʜɪᴛsᴜᴢɪ ᴄᴏɪɴを{amount}枚持っていません！").set_author(name=user.display_name, icon_url=user.display_avatar)
+		await interaction.followup.send(embed=embed)
+		return
+	else:
+		coin -= amount
+		coin_to += amount
+
+		await update_member_data(connection, user.id, exp, level, coin, nolevelUpNotifyFlag)
+		await update_member_data(connection, to.id, exp_to, level_to, coin_to, nolevelUpNotifyFlag_to)
+
+		await connection.close()
+		embed = discord.Embed(title=f"sʜɪᴛsᴜᴢɪ ᴄᴏɪɴを譲渡しました。",description=f"to: {to.mention}").set_author(name=user.display_name, icon_url=user.display_avatar)
+		await interaction.followup.send(embed=embed, silent=True)
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
 async def rank(interaction: discord.Interaction, user: discord.Member = None):
