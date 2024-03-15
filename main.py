@@ -638,7 +638,7 @@ async def top(interaction: discord.Interaction, page: int = 1):
 	await interaction.followup.send(embed=embed,silent=True)
 
 @tree.command(name="sell", description="経験値をsʜɪᴛsᴜᴢɪ ᴄᴏɪɴに換金します")
-async def sell(interaction: discord.Interaction, amount: int):
+async def sell(interaction: discord.Interaction):
 	await interaction.response.defer()
 	user = interaction.user
 	# テーブルからexpの値を取得
@@ -648,7 +648,7 @@ async def sell(interaction: discord.Interaction, amount: int):
 		exp = record["exp"]
 		level = record["level"]
 		coin = record["coin"]
-		nolevelUpNotifyFlag = record["nolevelUpNotifyFlag"]
+		nolevelUpNotifyFlag = record.get("nolevelUpNotifyFlag",False)
 	else:
 		exp = 0
 		level = 0
@@ -675,7 +675,7 @@ async def sell(interaction: discord.Interaction, amount: int, to: discord.Member
 		exp = record["exp"]
 		level = record["level"]
 		coin = record["coin"]
-		nolevelUpNotifyFlag = record["nolevelUpNotifyFlag"]
+		nolevelUpNotifyFlag = record.get("nolevelUpNotifyFlag",False)
 	else:
 		exp = 0
 		level = 0
@@ -687,7 +687,7 @@ async def sell(interaction: discord.Interaction, amount: int, to: discord.Member
 		exp_to = record_to["exp"]
 		level_to = record_to["level"]
 		coin_to = record_to["coin"]
-		nolevelUpNotifyFlag_to = record_to["nolevelUpNotifyFlag"]
+		nolevelUpNotifyFlag_to = record_to.get("nolevelUpNotifyFlag",False)
 	else:
 		exp_to = 0
 		level_to = 0
