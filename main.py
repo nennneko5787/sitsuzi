@@ -746,7 +746,7 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 
 	ren = 0
 	if count == None:
-		count = coin / 20
+		count = int(coin / 20)
 	for _ in range(count):
 		ren += 1
 		flag = await gacha(connection,user.id,message)
