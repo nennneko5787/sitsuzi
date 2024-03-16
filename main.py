@@ -27,6 +27,7 @@ import random
 import asyncpg
 import psutil
 import sys
+from typing import Optional
 sys.set_int_max_str_digits(0)
 
 if os.path.isfile(".env") == True:
@@ -318,53 +319,9 @@ async def on_message(message):
 
 		if message.channel.id == 1217395281092415499:
 			if client.get_guild(1208388325954560071).get_role(1215869247763382394) in message.role_mentions:
-				# テーブルからexpの値を取得
 				connection = await connect_to_database()
-				record = await get_member_data(connection, message.author.id)
+				await gacha(connection, message.author.id, message)
 				await connection.close()
-				if record:
-					exp = record["exp"]
-					level = record["level"]
-					coin = record["coin"]
-					nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
-					last_rogubo_date = record["last_rogubo_date"]
-				else:
-					last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
-					exp = 0
-					level = 0
-					coin = 0
-					nolevelUpNotifyFlag = False
-
-				if coin >= 20:
-					try:
-						xp = random.randint(-350 * level, 350 * level)
-						embed = discord.Embed(title="ガチャの結果", description=f"経験値 + {xp}",color=discord.Color.purple())
-						await message.reply(embed=embed)
-						exp += xp
-						coin -= 20
-						if exp >= 350 * level:
-							level += 1
-							exp = max(0, exp - 350 * level)
-							await client.get_channel(1208722087032651816).send(
-								f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
-								silent=nolevelUpNotifyFlag
-							)
-						elif exp <= 0:
-							level -= 1
-							exp = max(0, 350 * level + exp)
-							await client.get_channel(1208722087032651816).send(
-								f"😢 **{message.author.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
-								silent=nolevelUpNotifyFlag
-							)
-						connection = await connect_to_database()
-						await update_member_data(connection, message.author.id, exp, level, coin, nolevelUpNotifyFlag)
-						await connection.close()
-					except Exception as e:
-						traceback_info = traceback.format_exc()
-						await message.reply(f"ガチャ処理時のエラー。\n```\n{traceback_info}\n```")
-				else:
-					embed = discord.Embed(title="sʜɪᴛsᴜᴢɪ ᴄᴏɪɴ がたりません。", description="20ためてください。",color=discord.Color.red())
-					await message.reply(embed=embed)
 
 		if message.channel.id == 1208943057483862016:
 			if client.get_guild(1208388325954560071).get_role(1214535217981685790) in message.role_mentions:
@@ -715,6 +672,72 @@ async def sell(interaction: discord.Interaction, amount: int, to: discord.Member
 		await connection.close()
 		embed = discord.Embed(title=f"sʜɪᴛsᴜᴢɪ ᴄᴏɪɴを譲渡しました。",description=f"to: {to.mention}").set_author(name=user.display_name, icon_url=user.display_avatar)
 		await interaction.followup.send(embed=embed, silent=True)
+
+async def gacha(connection, userid, message):
+	# テーブルからexpの値を取得
+	connection = await connect_to_database()
+	record = await get_member_data(connection, userid)
+	await connection.close()
+	if record:
+		exp = record["exp"]
+		level = record["level"]
+		coin = record["coin"]
+		nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
+		last_rogubo_date = record["last_rogubo_date"]
+	else:
+		last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
+		exp = 0
+		level = 0
+		coin = 0
+		nolevelUpNotifyFlag = False
+
+	if coin >= 20:
+		try:
+			xp = random.randint(-350 * level, 350 * level)
+			embed = discord.Embed(title="ガチャの結果", description=f"経験値 + {xp}",color=discord.Color.purple())
+			await message.reply(embed=embed)
+			exp += xp
+			coin -= 20
+			if exp >= 350 * level:
+				level += 1
+				exp = max(0, exp - 350 * level)
+				await client.get_channel(1208722087032651816).send(
+					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+					silent=nolevelUpNotifyFlag
+				)
+			elif exp <= 0:
+				level -= 1
+				exp = max(0, 350 * level + exp)
+				await client.get_channel(1208722087032651816).send(
+					f"😢 **{message.author.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
+					silent=nolevelUpNotifyFlag
+				)
+			connection = await connect_to_database()
+			await update_member_data(connection, message.author.id, exp, level, coin, nolevelUpNotifyFlag)
+			return True
+		except Exception as e:
+			traceback_info = traceback.format_exc()
+			await message.reply(f"ガチャ処理時のエラー。\n```\n{traceback_info}\n```")
+			return True
+	else:
+		embed = discord.Embed(title="sʜɪᴛsᴜᴢɪ ᴄᴏɪɴ がたりません。", description="20ためてください。",color=discord.Color.red())
+		await message.reply(embed=embed)
+		return False
+
+@tree.command(name="renzoku-gacha", description="連続してガチャを引きます。何も指定しないとコインがなくなるまで引きます。")
+async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
+	message = await interaction.response.send("ガチャを引きます...")
+	user = interaction.user
+	# テーブルからexpの値を取得
+	connection = await connect_to_database()
+	ren = 0
+	for _ in count:
+		ren += 1
+		flag = await gacha(connection,user.id,message)
+		if flag == False or ren == count:
+			break
+	await interaction.channel.send(f"**{ren}**回ガチャを引きました。")
+	await connection.close()
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
 async def rank(interaction: discord.Interaction, user: discord.Member = None):
