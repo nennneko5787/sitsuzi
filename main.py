@@ -730,8 +730,24 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 	user = interaction.user
 	# テーブルからexpの値を取得
 	connection = await connect_to_database()
+	record = await get_member_data(connection, user.id)
+	if record:
+		exp = record["exp"]
+		level = record["level"]
+		coin = record["coin"]
+		nolevelUpNotifyFlag = record["nolevelupnotifyflag"]
+		last_rogubo_date = record["last_rogubo_date"]
+	else:
+		last_rogubo_date = datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d')
+		exp = 0
+		level = 0
+		coin = 0
+		nolevelUpNotifyFlag = False
+
 	ren = 0
-	for _ in count:
+	if count == None:
+		count = coin / 20
+	for _ in range(count):
 		ren += 1
 		flag = await gacha(connection,user.id,message)
 		if flag == False or ren == count:
