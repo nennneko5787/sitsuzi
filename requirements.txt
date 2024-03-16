@@ -6,3 +6,4 @@ Misskey.py
 python-dotenv
 asyncpg
 psutil
+numpy

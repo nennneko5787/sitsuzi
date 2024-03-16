@@ -28,6 +28,7 @@ import asyncpg
 import psutil
 import sys
 from typing import Optional
+import numpy as np
 sys.set_int_max_str_digits(0)
 
 if os.path.isfile(".env") == True:
@@ -638,7 +639,7 @@ async def sell(interaction: discord.Interaction, amount: int, to: discord.Member
 		exp = record["exp"]
 		level = record["level"]
 		coin = record["coin"]
-		nolevelUpNotifyFlag = record.get("nolevelUpNotifyFlag",False)
+		nolevelUpNotifyFlag = record.get("nolevelupnotifyflag",False)
 	else:
 		exp = 0
 		level = 0
@@ -650,7 +651,7 @@ async def sell(interaction: discord.Interaction, amount: int, to: discord.Member
 		exp_to = record_to["exp"]
 		level_to = record_to["level"]
 		coin_to = record_to["coin"]
-		nolevelUpNotifyFlag_to = record_to.get("nolevelUpNotifyFlag",False)
+		nolevelUpNotifyFlag_to = record_to.get("nolevelupnotifyflag",False)
 	else:
 		exp_to = 0
 		level_to = 0
@@ -693,7 +694,7 @@ async def gacha(connection, user, message):
 
 	if coin >= 20:
 		try:
-			xp = random.randint(-350 * level, 350 * level)
+			xp = np.random.randint(-350 * level, 350 * level)
 			embed = discord.Embed(title="ガチャの結果", description=f"経験値 + {xp}",color=discord.Color.purple())
 			await message.reply(embed=embed)
 			exp += xp
