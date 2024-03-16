@@ -726,7 +726,8 @@ async def gacha(connection, userid, message):
 
 @tree.command(name="renzoku-gacha", description="連続してガチャを引きます。何も指定しないとコインがなくなるまで引きます。")
 async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
-	message = await interaction.response.send_message("ガチャを引きます...")
+	await interaction.response.defer()
+	message = await interaction.channel.send("ガチャを引きます...")
 	user = interaction.user
 	# テーブルからexpの値を取得
 	connection = await connect_to_database()
@@ -752,7 +753,7 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 		flag = await gacha(connection,user.id,message)
 		if flag == False or ren == count:
 			break
-	await interaction.channel.send(f"**{ren}**回ガチャを引きました。")
+	await interaction.response.send_message(f"**{ren}**回ガチャを引きました。")
 	await connection.close()
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
