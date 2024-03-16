@@ -320,7 +320,7 @@ async def on_message(message):
 		if message.channel.id == 1217395281092415499:
 			if client.get_guild(1208388325954560071).get_role(1215869247763382394) in message.role_mentions:
 				connection = await connect_to_database()
-				await gacha(connection, message.author.id, message)
+				await gacha(connection, message.author, message)
 				await connection.close()
 
 		if message.channel.id == 1208943057483862016:
@@ -673,10 +673,10 @@ async def sell(interaction: discord.Interaction, amount: int, to: discord.Member
 		embed = discord.Embed(title=f"sʜɪᴛsᴜᴢɪ ᴄᴏɪɴを譲渡しました。",description=f"to: {to.mention}").set_author(name=user.display_name, icon_url=user.display_avatar)
 		await interaction.followup.send(embed=embed, silent=True)
 
-async def gacha(connection, userid, message):
+async def gacha(connection, user, message):
 	# テーブルからexpの値を取得
 	connection = await connect_to_database()
-	record = await get_member_data(connection, userid)
+	record = await get_member_data(connection, user.id)
 	await connection.close()
 	if record:
 		exp = record["exp"]
@@ -702,18 +702,18 @@ async def gacha(connection, userid, message):
 				level += 1
 				exp = max(0, exp - 350 * level)
 				await client.get_channel(1208722087032651816).send(
-					f"🥳 **{userid.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+					f"🥳 **{user.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 					silent=nolevelUpNotifyFlag
 				)
 			elif exp <= 0:
 				level -= 1
 				exp = max(0, 350 * level + exp)
 				await client.get_channel(1208722087032651816).send(
-					f"😢 **{userid.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
+					f"😢 **{user.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
 					silent=nolevelUpNotifyFlag
 				)
 			connection = await connect_to_database()
-			await update_member_data(connection, userid.id, exp, level, coin, nolevelUpNotifyFlag)
+			await update_member_data(connection, user.id, exp, level, coin, nolevelUpNotifyFlag)
 			return True
 		except Exception as e:
 			traceback_info = traceback.format_exc()
@@ -750,7 +750,7 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 		count = int(coin / 20)
 	for _ in range(count):
 		ren += 1
-		flag = await gacha(connection,user.id,message)
+		flag = await gacha(connection,user,message)
 		if flag == False or ren == count:
 			break
 		await asyncio.sleep(0.01)
