@@ -800,7 +800,7 @@ async def notlevelnotify(interaction: discord.Interaction, flag: bool):
 	await interaction.followup.send(embed=embed, ephemeral=True)
 
 @tree.command(name="eval", description="計算式を書くと計算してくれます")
-async def eval(interaction: discord.Interaction, formura: str):
+async def _eval(interaction: discord.Interaction, formura: str):
 	await interaction.response.defer()
 	try:
 		answer = eval(formura)
