@@ -702,18 +702,18 @@ async def gacha(connection, userid, message):
 				level += 1
 				exp = max(0, exp - 350 * level)
 				await client.get_channel(1208722087032651816).send(
-					f"🥳 **{message.author.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
+					f"🥳 **{userid.mention}** さんのレベルが **{level - 1}** から **{level}** に上がりました 🎉",
 					silent=nolevelUpNotifyFlag
 				)
 			elif exp <= 0:
 				level -= 1
 				exp = max(0, 350 * level + exp)
 				await client.get_channel(1208722087032651816).send(
-					f"😢 **{message.author.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
+					f"😢 **{userid.mention}** さんのレベルが **{level + 1}** から **{level}** に下がりました 🏥",
 					silent=nolevelUpNotifyFlag
 				)
 			connection = await connect_to_database()
-			await update_member_data(connection, message.author.id, exp, level, coin, nolevelUpNotifyFlag)
+			await update_member_data(connection, userid.id, exp, level, coin, nolevelUpNotifyFlag)
 			return True
 		except Exception as e:
 			traceback_info = traceback.format_exc()
@@ -753,6 +753,7 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 		flag = await gacha(connection,user.id,message)
 		if flag == False or ren == count:
 			break
+		await asyncio.sleep(0.01)
 	await interaction.response.send_message(f"**{ren}**回ガチャを引きました。")
 	await connection.close()
 
