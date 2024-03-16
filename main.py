@@ -755,7 +755,7 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 		if flag == False or ren == count:
 			break
 		await asyncio.sleep(0.01)
-	await interaction.response.send_message(f"**{ren}**回ガチャを引きました。")
+	await interaction.followup.send(f"**{ren}**回ガチャを引きました。")
 	await connection.close()
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
