@@ -803,7 +803,7 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		traceback_info = traceback.format_exc()
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
-@tree.command(name="setbirthday", description="誕生日を設定できます。設定したら誕生日をお祝いしてくれます。")
+@tree.command(name="setbirthday", description="誕生日を確認、または設定できます。設定したら誕生日をお祝いしてくれます。")
 @app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd)")
 @discord.app_commands.choices(
 	person=[
@@ -812,29 +812,35 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		discord.app_commands.Choice(name="推し②",value="oshi2_birthday"),
 	]
 )
-async def setbirthday(interaction: discord.Interaction, person: str, date: str):
+async def setbirthday(interaction: discord.Interaction, person: str, date: str = None):
 	await interaction.response.defer()
-	length = date.count("/")
-	try:
-		if length == 1:
-			birthday = datetime.datetime.strptime(date, '%m/%d')
-		elif length == 2:
-			birthday = datetime.datetime.strptime(date, '%Y/%m/%d')
+	if date is not None:
+		length = date.count("/")
+		try:
+			if length == 1:
+				birthday = datetime.datetime.strptime(date, '%m/%d')
+			elif length == 2:
+				birthday = datetime.datetime.strptime(date, '%Y/%m/%d')
+			connection = await connect_to_database()
+			await connection.execute(
+				f"""
+				INSERT INTO member_data (id, {person})
+				VALUES ($1, $2)
+				ON CONFLICT (id) DO UPDATE
+				SET {person} = $2
+				""",
+				interaction.user.id,
+				date
+			)
+			await interaction.followup.send("誕生日をセットしました。")
+		except:
+			error = traceback.format_exc()
+			await interaction.followup.send(f"誕生日の書き方がおかしいらしい。\n```python\n{error}\n```")
+	else:
 		connection = await connect_to_database()
-		await connection.execute(
-			f"""
-			INSERT INTO member_data (id, {person})
-			VALUES ($1, $2)
-			ON CONFLICT (id) DO UPDATE
-			SET {person} = $2
-			""",
-			interaction.user.id,
-			date
-		)
-		await interaction.followup.send("誕生日をセットしました。")
-	except:
-		error = traceback.format_exc()
-		await interaction.followup.send(f"誕生日の書き方がおかしいらしい。\n```python\n{error}\n```")
+		result = await connection.fetch(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
+		await connection.close()
+		await interaction.followup.send(f"誕生日は**{result}**です")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
