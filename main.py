@@ -859,7 +859,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 		connection = await connect_to_database()
 		result = await connection.fetch(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
 		await connection.close()
-		await interaction.followup.send(f"誕生日は**{str(result[person])}**です")
+		await interaction.followup.send(f"誕生日は**{str(result[0])}**です")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
@@ -1076,7 +1076,7 @@ async def send_x_embed(current_time):
 @tasks.loop(seconds=1)
 async def birthday():
 	now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
-	if now.hour == 0 and now.minute == 0 and now.second == 0:
+	if True:
 		connection = await connect_to_database()
 		result = await connection.fetch("SELECT * FROM member_data")
 		for row in result:
