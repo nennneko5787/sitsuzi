@@ -805,7 +805,7 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
 @tree.command(name="setbirthday", description="誕生日を確認、または設定できます。設定したら誕生日をお祝いしてくれます。")
-@app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd、Noneで設定をリセットします。)")
+@app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd、Noneで設定をリセットします。Viewで見れます。)")
 @discord.app_commands.choices(
 	person=[
 		discord.app_commands.Choice(name="自分",value="personal_birthday"),
@@ -813,9 +813,9 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		discord.app_commands.Choice(name="推し②",value="oshi2_birthday"),
 	]
 )
-async def setbirthday(interaction: discord.Interaction, person: str, date: str = None):
+async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 	await interaction.response.defer()
-	if date is not None:
+	if date != "View":
 		length = date.count("/")
 		try:
 			if date == "None":
