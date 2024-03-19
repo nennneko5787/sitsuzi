@@ -872,7 +872,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 		discord.app_commands.Choice(name="推し②",value="oshi2_name"),
 	]
 )
-async def setoshiname(interaction: discord.Interaction, oshi: str, name: str)
+async def setoshiname(interaction: discord.Interaction, oshi: str, name: str):
 	connection = await connect_to_database()
 	await connection.execute(
 		f"""
