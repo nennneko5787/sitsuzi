@@ -865,6 +865,27 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 		else:
 			await interaction.followup.send("誕生日がセットされていません。")
 
+@tree.command(name="setoshiname", description="推しの名前を設定しましょう")
+@discord.app_commands.choices(
+	oshi=[
+		discord.app_commands.Choice(name="推し①",value="oshi1_name"),
+		discord.app_commands.Choice(name="推し②",value="oshi2_name"),
+	]
+)
+async def setoshiname(interaction: discord.Interaction, oshi: str, name: str)
+	connection = await connect_to_database()
+	await connection.execute(
+		f"""
+		INSERT INTO member_data (id, {oshi})
+		VALUES ($1, $2)
+		ON CONFLICT (id) DO UPDATE
+		SET {oshi} = $2
+		""",
+		interaction.user.id,
+		oshi
+	)
+	await connection.close()
+
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
 	await interaction.response.defer()
