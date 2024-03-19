@@ -814,7 +814,7 @@ async def _eval(interaction: discord.Interaction, formura: str):
 )
 async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 	await interaction.response.defer()
-	length = len(date.split("/"))
+	length = date.count("/")
 	try:
 		if length == 1:
 			birthday = datetime.datetime.strptime(date, '%m/%d')
