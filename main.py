@@ -807,9 +807,9 @@ async def _eval(interaction: discord.Interaction, formura: str):
 @app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd)")
 @discord.app_commands.choices(
 	person=[
-		discord.app_commands.Choice(name="自分",value="personal-birthday"),
-		discord.app_commands.Choice(name="推し①",value="oshi1-birthday"),
-		discord.app_commands.Choice(name="推し②",value="oshi2-birthday"),
+		discord.app_commands.Choice(name="自分",value="personal_birthday"),
+		discord.app_commands.Choice(name="推し①",value="oshi1_birthday"),
+		discord.app_commands.Choice(name="推し②",value="oshi2_birthday"),
 	]
 )
 async def setbirthday(interaction: discord.Interaction, person: str, date: str):
