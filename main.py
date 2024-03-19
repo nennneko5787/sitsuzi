@@ -873,6 +873,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 	]
 )
 async def setoshiname(interaction: discord.Interaction, oshi: str, name: str):
+	await interaction.response.defer()
 	connection = await connect_to_database()
 	await connection.execute(
 		f"""
@@ -885,6 +886,7 @@ async def setoshiname(interaction: discord.Interaction, oshi: str, name: str):
 		name
 	)
 	await connection.close()
+	await interaction.followup.send("推しの名前を設定しました。")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
