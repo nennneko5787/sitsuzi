@@ -1051,11 +1051,67 @@ async def send_x_embed(current_time):
 async def birthday():
 	now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
 	target_time = datetime.datetime(now.year, now.month, now.day, 0, 0, 0)
-
 	if now == target_time:
-		my_date = datetime(now.year, now.month, now.day+1)
+		connection = await connect_to_database()
+		result = await connection.fetch("SELECT * FROM member_data")
+		for row in result:
+			id = row.get("id",None)
+			birthday = row.get("personal_birthday","0000/00/00")
+			length = birthday.count("/")
+			if length == 1:
+				month, day = birthday.split("/")
+				month = int(month)
+				day = int(day)
+			elif length == 2:
+				year, month, day = birthday.split("/")
+				year = int(month)
+				month = int(month)
+				day = int(day)
+			else:
+				continue
+			if not calendar.isleap(now.year) and month == 2 and day == 29:
+				month = 3
+				day = 1
+			if now.month == month and now.day == day:
+				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの誕生日です！おめでとう！🎉")
 
-		one_day_before_midnight = datetime(my_date.year, my_date.month, my_date.day, 23, 59, 59) - timedelta(days=1)
+			birthday = row.get("oshi1_birthday","0000/00/00")
+			length = birthday.count("/")
+			if length == 1:
+				month, day = birthday.split("/")
+				month = int(month)
+				day = int(day)
+			elif length == 2:
+				year, month, day = birthday.split("/")
+				year = int(month)
+				month = int(month)
+				day = int(day)
+			else:
+				continue
+			if not calendar.isleap(now.year) and month == 2 and day == 29:
+				month = 3
+				day = 1
+			if now.month == month and now.day == day:
+				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①の誕生日です！おめでとう！🎉")
+
+			birthday = row.get("oshi2_birthday","0000/00/00")
+			length = birthday.count("/")
+			if length == 1:
+				month, day = birthday.split("/")
+				month = int(month)
+				day = int(day)
+			elif length == 2:
+				year, month, day = birthday.split("/")
+				year = int(month)
+				month = int(month)
+				day = int(day)
+			else:
+				continue
+			if not calendar.isleap(now.year) and month == 2 and day == 29:
+				month = 3
+				day = 1
+			if now.month == month and now.day == day:
+				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②の誕生日です！おめでとう！🎉")
 
 @tasks.loop(minutes=20)
 async def server_stat():
