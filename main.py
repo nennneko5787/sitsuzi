@@ -860,7 +860,10 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 		connection = await connect_to_database()
 		result = await connection.fetch(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
 		await connection.close()
-		await interaction.followup.send(f"誕生日は**{str(result[0])}**です")
+		if result:
+			await interaction.followup.send(f"誕生日は**{result[f'{person}']}**です")
+		else:
+			await interaction.followup.send("誕生日がセットされていません。")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
