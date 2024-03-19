@@ -821,6 +821,9 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 				birthday = datetime.datetime.strptime(date, '%m/%d')
 			elif length == 2:
 				birthday = datetime.datetime.strptime(date, '%Y/%m/%d')
+			else:
+				await interaction.followup.send(f"誕生日の書き方がおかしいです。YYYY/mm/dd または mm/ddの書式のみを受け入れます。")
+				return
 			connection = await connect_to_database()
 			await connection.execute(
 				f"""
@@ -835,7 +838,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 			await interaction.followup.send("誕生日をセットしました。")
 		except:
 			error = traceback.format_exc()
-			await interaction.followup.send(f"誕生日の書き方がおかしいらしい。\n```python\n{error}\n```")
+			await interaction.followup.send(f"エラーが発生しました。\n```python\n{error}\n```")
 	else:
 		connection = await connect_to_database()
 		result = await connection.fetch(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
