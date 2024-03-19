@@ -1051,7 +1051,7 @@ async def send_x_embed(current_time):
 async def birthday():
 	now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
 	target_time = datetime.datetime(now.year, now.month, now.day, 0, 0, 0)
-	if now == target_time:
+	if now.date() == target_time.date():
 		connection = await connect_to_database()
 		result = await connection.fetch("SELECT * FROM member_data")
 		for row in result:
