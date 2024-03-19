@@ -804,7 +804,7 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
 @tree.command(name="setbirthday", description="誕生日を確認、または設定できます。設定したら誕生日をお祝いしてくれます。")
-@app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd)")
+@app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd、Noneで設定をリセットします。)")
 @discord.app_commands.choices(
 	person=[
 		discord.app_commands.Choice(name="自分",value="personal_birthday"),
@@ -817,6 +817,21 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 	if date is not None:
 		length = date.count("/")
 		try:
+			if date == "None":
+				connection = await connect_to_database()
+				await connection.execute(
+					f"""
+					INSERT INTO member_data (id, {person})
+					VALUES ($1, $2)
+					ON CONFLICT (id) DO UPDATE
+					SET {person} = $2
+					""",
+					interaction.user.id,
+					None
+				)
+				await connection.close()
+				await interaction.followup.send("誕生日をリセットしました。")
+				return
 			if length == 1:
 				birthday = datetime.datetime.strptime(date, '%m/%d')
 			elif length == 2:
@@ -835,6 +850,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 				interaction.user.id,
 				date
 			)
+			await connection.close()
 			await interaction.followup.send("誕生日をセットしました。")
 		except:
 			error = traceback.format_exc()
@@ -843,7 +859,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 		connection = await connect_to_database()
 		result = await connection.fetch(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
 		await connection.close()
-		await interaction.followup.send(f"誕生日は**{str(result)}**です")
+		await interaction.followup.send(f"誕生日は**{str(result[person])}**です")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
