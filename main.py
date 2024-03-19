@@ -858,7 +858,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str =
 			await interaction.followup.send(f"エラーが発生しました。\n```python\n{error}\n```")
 	else:
 		connection = await connect_to_database()
-		result = await connection.fetchrow(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
+		result = await connection.fetchval(f"SELECT {person} FROM member_data WHERE id = {interaction.user.id}")
 		await connection.close()
 		if result:
 			await interaction.followup.send(f"誕生日は**{result}**です")
