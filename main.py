@@ -1076,8 +1076,7 @@ async def send_x_embed(current_time):
 @tasks.loop(seconds=1)
 async def birthday():
 	now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
-	target_time = datetime.datetime(now.year, now.month, now.day, 0, 0, 0)
-	if now.date() == target_time.date():
+	if now.hour == 0 and now.minute == 0 and now.second == 0:
 		connection = await connect_to_database()
 		result = await connection.fetch("SELECT * FROM member_data")
 		for row in result:
@@ -1085,6 +1084,9 @@ async def birthday():
 			birthday = row.get("personal_birthday","0000/00/00")
 			if birthday is not None:
 				length = birthday.count("/")
+				year = 0
+				month = 0
+				day = 0
 				if length == 1:
 					month, day = birthday.split("/")
 					month = int(month)
@@ -1099,12 +1101,50 @@ async def birthday():
 					month = 3
 					day = 1
 				if now.month == month and now.day == day:
-					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの誕生日です！おめでとう！🎉")
+					if year != 0:
+						old = now.year - year
+						t = f"{old}歳の"
+					else:
+						t = ""
+					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの{t}誕生日です！おめでとう！🎉")
 					await message.publish()
 
 			birthday = row.get("oshi1_birthday","0000/00/00")
 			if birthday is not None:
 				length = birthday.count("/")
+				year = 0
+				month = 0
+				day = 0
+				if length == 1:
+					month, day = birthday.split("/")
+					month = int(month)
+					day = int(day)
+				elif length == 2:
+					year, month, day = birthday.split("/")
+					year = int(month)
+					month = int(month)
+					day = int(day)
+
+				if not calendar.isleap(now.year) and month == 2 and day == 29:
+					month = 3
+					day = 1
+					
+				if now.month == month and now.day == day:
+					if year != 0:
+						old = now.year - year
+						t = f"{old}歳の"
+					else:
+						t = ""
+
+					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①の{t}誕生日です！おめでとう！🎉")
+					await message.publish()
+
+			birthday = row.get("oshi2_birthday","0000/00/00")
+			if birthday is not None:
+				length = birthday.count("/")
+				year = 0
+				month = 0
+				day = 0
 				if length == 1:
 					month, day = birthday.split("/")
 					month = int(month)
@@ -1119,28 +1159,13 @@ async def birthday():
 					month = 3
 					day = 1
 				if now.month == month and now.day == day:
-					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①の誕生日です！おめでとう！🎉")
+					if year != 0:
+						old = now.year - year
+						t = f"{old}歳の"
+					else:
+						t = ""
+					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②の{t}誕生日です！おめでとう！🎉")
 					await message.publish()
-
-			birthday = row.get("oshi2_birthday","0000/00/00")
-			if birthday is not None:
-				length = birthday.count("/")
-				if length == 1:
-					month, day = birthday.split("/")
-					month = int(month)
-					day = int(day)
-				elif length == 2:
-					year, month, day = birthday.split("/")
-					year = int(month)
-					month = int(month)
-					day = int(day)
-
-			if not calendar.isleap(now.year) and month == 2 and day == 29:
-				month = 3
-				day = 1
-			if now.month == month and now.day == day:
-				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②の誕生日です！おめでとう！🎉")
-				await message.publish()
 
 @tasks.loop(minutes=20)
 async def server_stat():
