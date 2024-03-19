@@ -1,4 +1,4 @@
-# 執事鯖のボットです
+# 執事鯖のボット
 
 import os
 import discord
