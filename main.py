@@ -29,6 +29,8 @@ import psutil
 import sys
 from typing import Optional
 import numpy as np
+import calendar
+
 sys.set_int_max_str_digits(0)
 
 if os.path.isfile(".env") == True:
@@ -159,18 +161,6 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 async def connect_to_database():
 	return await asyncpg.connect(DATABASE_URL)
 
-async def create_tables(connection):
-	await connection.execute(
-		"""
-		CREATE TABLE IF NOT EXISTS member_data (
-			id BIGINT PRIMARY KEY,
-			exp DECIMAL,
-			level INT
-		)
-		"""
-	)
-
-
 async def get_member_data(connection, user_id):
 	return await connection.fetchrow(
 		"""
@@ -178,7 +168,6 @@ async def get_member_data(connection, user_id):
 		""",
 		user_id,
 	)
-
 
 async def update_member_data(connection, user_id, exp, level, coin, nolevelUpNotifyFlag):
 	await connection.execute(
@@ -216,6 +205,7 @@ async def on_ready():
 	hour.start()
 	spla3.start()
 	change.start()
+	birthday.start()
 	global is_connected
 	if is_connected == False:
 		message = await client.get_guild(1208388325954560071).get_channel(1218087342397591553).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
@@ -813,6 +803,37 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		traceback_info = traceback.format_exc()
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
+@tree.command(name="setbirthday", description="誕生日を設定できます。設定したら誕生日をお祝いしてくれます。")
+@app_commands.describe(string="誕生日(YYYY/mm/dd または mm/dd)")
+@discord.app_commands.choices(
+	person=[
+		discord.app_commands.Choice(name="自分",value="personal-birthday"),
+		discord.app_commands.Choice(name="推し①",value="oshi1-birthday"),
+		discord.app_commands.Choice(name="推し②",value="oshi2-birthday"),
+	]
+)
+async def setbirthday(interaction: discord.Interaction, person: str, date: str):
+	await interaction.response.defer()
+	length = len(date.split("/"))
+	try:
+		if length == 1:
+			birthday = datetime.datetime.strptime(date, '%m/%d')
+		elif length == 2:
+			birthday = datetime.datetime.strptime(date, '%Y/%m/%d')
+		connection = await connect_to_database()
+		await connection.execute(
+			f"""
+			INSERT INTO member_data (id, {person})
+			VALUES ($1, $2)
+			ON CONFLICT (id) DO UPDATE
+			SET {person} = $2
+			""",
+			date
+		)
+		await interaction.followup.send("誕生日をセットしました。")
+	except:
+		await interaction.followup.send("誕生日の書き方がおかしいらしい。")
+
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
 	await interaction.response.defer()
@@ -1023,6 +1044,16 @@ async def send_x_embed(current_time):
 		guild = client.get_guild(1208388325954560071)
 		channel = guild.get_channel(1211207125116915713)
 		await channel.send(embeds=[battle_embed, battle_stage1_embed, battle_stage2_embed])
+
+@tasks.loop(seconds=1)
+async def birthday():
+	now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
+	target_time = datetime.datetime(now.year, now.month, now.day, 0, 0, 0)
+
+	if now == target_time:
+		my_date = datetime(now.year, now.month, now.day+1)
+
+		one_day_before_midnight = datetime(my_date.year, my_date.month, my_date.day, 23, 59, 59) - timedelta(days=1)
 
 @tasks.loop(minutes=20)
 async def server_stat():
