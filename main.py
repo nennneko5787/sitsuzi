@@ -209,7 +209,8 @@ async def on_ready():
 	global is_connected
 	if is_connected == False:
 		message = await client.get_guild(1208388325954560071).get_channel(1218087342397591553).send(f"{client.user.mention} が、`{os.getenv('RENDER_GIT_COMMIT')}`へのアップデート作業に入ります。そのまま5分ほどお待ち下さい。(この間にレベルアップやログインボーナスの受け取り、ガチャを回すなどの動作を行うと二重に反応してしまいます。仕様です。バグ報告しないでください。)")
-		await message.publish()
+		if message.flags.crossposted != True:
+			await message.publish()
 		is_connected = True
 
 @client.event
@@ -1076,7 +1077,7 @@ async def send_x_embed(current_time):
 @tasks.loop(seconds=1)
 async def birthday():
 	now = datetime.datetime.now(ZoneInfo("Asia/Tokyo"))
-	if True:
+	if now.hour == 0 and now.minute == 0 and now.second == 0:
 		connection = await connect_to_database()
 		result = await connection.fetch("SELECT * FROM member_data")
 		for row in result:
@@ -1107,7 +1108,8 @@ async def birthday():
 					else:
 						t = ""
 					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの{t}誕生日です！おめでとう！🎉")
-					await message.publish()
+					if message.flags.crossposted != True:
+						await message.publish()
 
 			birthday = row.get("oshi1_birthday","0000/00/00")
 			if birthday is not None:
@@ -1137,7 +1139,8 @@ async def birthday():
 						t = ""
 
 					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①の{t}誕生日です！おめでとう！🎉")
-					await message.publish()
+					if message.flags.crossposted != True:
+						await message.publish()
 
 			birthday = row.get("oshi2_birthday","0000/00/00")
 			if birthday is not None:
@@ -1165,7 +1168,8 @@ async def birthday():
 					else:
 						t = ""
 					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②の{t}誕生日です！おめでとう！🎉")
-					await message.publish()
+					if message.flags.crossposted != True:
+						await message.publish()
 
 @tasks.loop(minutes=20)
 async def server_stat():
