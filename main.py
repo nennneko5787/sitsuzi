@@ -833,7 +833,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 		await interaction.followup.send("誕生日をセットしました。")
 	except:
 		error = traceback.format_exc()
-		await interaction.followup.send("誕生日の書き方がおかしいらしい。")
+		await interaction.followup.send(f"誕生日の書き方がおかしいらしい。\n```python\n{error}\n```")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
