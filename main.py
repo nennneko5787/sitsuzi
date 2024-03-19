@@ -828,7 +828,7 @@ async def setbirthday(interaction: discord.Interaction, person: str, date: str):
 			ON CONFLICT (id) DO UPDATE
 			SET {person} = $2
 			""",
-			interaction.user.id
+			interaction.user.id,
 			date
 		)
 		await interaction.followup.send("誕生日をセットしました。")
