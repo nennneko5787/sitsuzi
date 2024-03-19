@@ -1067,13 +1067,13 @@ async def birthday():
 				year = int(month)
 				month = int(month)
 				day = int(day)
-			else:
-				continue
+
 			if not calendar.isleap(now.year) and month == 2 and day == 29:
 				month = 3
 				day = 1
 			if now.month == month and now.day == day:
 				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの誕生日です！おめでとう！🎉")
+				await message.publish()
 
 			birthday = row.get("oshi1_birthday","0000/00/00")
 			length = birthday.count("/")
@@ -1086,13 +1086,13 @@ async def birthday():
 				year = int(month)
 				month = int(month)
 				day = int(day)
-			else:
-				continue
+
 			if not calendar.isleap(now.year) and month == 2 and day == 29:
 				month = 3
 				day = 1
 			if now.month == month and now.day == day:
 				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①の誕生日です！おめでとう！🎉")
+				await message.publish()
 
 			birthday = row.get("oshi2_birthday","0000/00/00")
 			length = birthday.count("/")
@@ -1105,13 +1105,13 @@ async def birthday():
 				year = int(month)
 				month = int(month)
 				day = int(day)
-			else:
-				continue
+
 			if not calendar.isleap(now.year) and month == 2 and day == 29:
 				month = 3
 				day = 1
 			if now.month == month and now.day == day:
 				message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②の誕生日です！おめでとう！🎉")
+				await message.publish()
 
 @tasks.loop(minutes=20)
 async def server_stat():
