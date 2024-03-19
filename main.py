@@ -882,7 +882,7 @@ async def setoshiname(interaction: discord.Interaction, oshi: str, name: str)
 		SET {oshi} = $2
 		""",
 		interaction.user.id,
-		oshi
+		name
 	)
 	await connection.close()
 
