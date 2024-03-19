@@ -804,7 +804,7 @@ async def _eval(interaction: discord.Interaction, formura: str):
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
 
 @tree.command(name="setbirthday", description="誕生日を設定できます。設定したら誕生日をお祝いしてくれます。")
-@app_commands.describe(string="誕生日(YYYY/mm/dd または mm/dd)")
+@app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd)")
 @discord.app_commands.choices(
 	person=[
 		discord.app_commands.Choice(name="自分",value="personal-birthday"),
