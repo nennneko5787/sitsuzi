@@ -1139,6 +1139,11 @@ async def birthday():
 						pass
 
 			birthday = row.get("oshi1_birthday","0000/00/00")
+			oshi = row.get("oshi1_name",None)
+			if oshi is not None:
+				nm = f"の{oshi}さん"
+			else:
+				nm = ""
 			if birthday is not None:
 				length = birthday.count("/")
 				year = 0
@@ -1165,7 +1170,7 @@ async def birthday():
 					else:
 						t = ""
 
-					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①の{t}誕生日です！おめでとう！🎉")
+					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し①{nm}の{t}誕生日です！おめでとう！🎉")
 					try:
 						if message.flags.crossposted != True:
 							await message.publish()
@@ -1173,6 +1178,11 @@ async def birthday():
 						pass
 
 			birthday = row.get("oshi2_birthday","0000/00/00")
+			oshi = row.get("oshi1_name",None)
+			if oshi is not None:
+				nm = f"の{oshi}さん"
+			else:
+				nm = ""
 			if birthday is not None:
 				length = birthday.count("/")
 				year = 0
@@ -1197,7 +1207,7 @@ async def birthday():
 						t = f"{old}歳の"
 					else:
 						t = ""
-					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②の{t}誕生日です！おめでとう！🎉")
+					message = await client.get_channel(1219491827422330910).send(f"🎂今日は{client.get_guild(1208388325954560071).get_member(id).mention}さんの推し②{nm}の{t}誕生日です！おめでとう！🎉")
 					try:
 						if message.flags.crossposted != True:
 							await message.publish()
