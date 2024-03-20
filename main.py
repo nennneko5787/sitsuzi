@@ -792,8 +792,8 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 	await interaction.followup.send(f"**{ren}**回ガチャを引きました。")
 	await connection.close()
 
-@tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
-async def rank(interaction: discord.Interaction, user: discord.User = None):
+@tree.command(name="info", description="ユーザーの情報を確認できます")
+async def info(interaction: discord.Interaction, user: discord.User = None):
 	await interaction.response.defer()
 	if user is None:
 		user = interaction.user
@@ -846,6 +846,13 @@ async def _eval(interaction: discord.Interaction, formura: str):
 	except:
 		traceback_info = traceback.format_exc()
 		await interaction.followup.send(f"エラー！\n```\n{traceback_info}\n```", ephemeral=True)
+
+@tree.command(name="calendar", description="カレンダーを確認できます。誕生日も確認することができます。")
+@app_commands.describe(year="年", month="月")
+async def setbirthday(interaction: discord.Interaction, year: int, month: int):
+	await interaction.response.defer()
+	カレンダー = calendar.month(year, month)
+	await interaction.followup.send(f"```\n{カレンダー}\n```")
 
 @tree.command(name="setbirthday", description="誕生日を確認、または設定できます。設定したら誕生日をお祝いしてくれます。")
 @app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd、Noneで設定をリセットします。Viewで見れます。)")
