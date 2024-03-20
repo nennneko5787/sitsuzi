@@ -852,7 +852,82 @@ async def _eval(interaction: discord.Interaction, formura: str):
 async def setbirthday(interaction: discord.Interaction, year: int, month: int):
 	await interaction.response.defer()
 	カレンダー = calendar.month(year, month)
-	await interaction.followup.send(f"```\n{カレンダー}\n```")
+	connection = await connect_to_database()
+	result = await connection.fetch("SELECT id, birthday FROM member_data")
+	ant = []
+	for _ in result:
+		if _.get('birthday') is not None:
+			_length = _.get('birthday').count("/")
+			_year = 0
+			_month = 0
+			_day = 0
+			if _length == 1:
+				_month, _day = _.get('birthday').split("/")
+				_month = int(_month)
+				_day = int(_day)
+			elif _length == 2:
+				_year, _month, _day = _.get('birthday').split("/")
+				_year = int(_year)
+				_month = int(_month)
+				_day = int(_day)
+		else:
+			continue
+		if _month == month:
+			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} ({_.get('birthday')})")
+
+	result = await connection.fetch("SELECT id, oshi1_birthday, oshi1_name FROM member_data")
+	ant = []
+	for _ in result:
+		if _.get('oshi1_birthday') is not None:
+			_length = _.get('oshi1_birthday').count("/")
+			_year = 0
+			_month = 0
+			_day = 0
+			if _length == 1:
+				_month, _day = _.get('oshi1_birthday').split("/")
+				_month = int(_month)
+				_day = int(_day)
+			elif _length == 2:
+				_year, _month, _day = _.get('oshi1_birthday').split("/")
+				_year = int(_year)
+				_month = int(_month)
+				_day = int(_day)
+		else:
+			continue
+		if _month == month:
+			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} さんの推しである{_.get('oshi1_name')}さん ({_.get('oshi1_birthday')})")
+
+	result = await connection.fetch("SELECT id, oshi2_birthday, oshi2_name FROM member_data")
+	ant = []
+	for _ in result:
+		if _.get('oshi2_birthday') is not None:
+			_length = _.get('oshi2_birthday').count("/")
+			_year = 0
+			_month = 0
+			_day = 0
+			if _length == 1:
+				_month, _day = _.get('oshi2_birthday').split("/")
+				_month = int(_year)
+				_day = int(_day)
+			elif _length == 2:
+				_year, _month, _day = _.get('oshi2_birthday').split("/")
+				_year = int(_year)
+				_month = int(_month)
+				_day = int(_day)
+		else:
+			continue
+		if _month == month:
+			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} さんの推しである{_.get('oshi2_name')}さん ({_.get('oshi2_birthday')})")
+
+	embed = discord.Embed(
+		title=f"{year}年{month}月 のカレンダー",
+		description=f"```\n{カレンダー}\n```",
+		color=discord.Colour.purple()
+	).add_field(
+		name="この月に誕生日を迎える人",
+		value="\n".join(ant)
+	)
+	await interaction.followup.send(embed=embed)
 
 @tree.command(name="setbirthday", description="誕生日を確認、または設定できます。設定したら誕生日をお祝いしてくれます。")
 @app_commands.describe(person="ターゲット", date="誕生日(YYYY/mm/dd または mm/dd、Noneで設定をリセットします。Viewで見れます。)")
@@ -1170,7 +1245,7 @@ async def birthday():
 					day = int(day)
 				elif length == 2:
 					year, month, day = birthday.split("/")
-					year = int(month)
+					year = int(year)
 					month = int(month)
 					day = int(day)
 
@@ -1207,7 +1282,7 @@ async def birthday():
 					day = int(day)
 				elif length == 2:
 					year, month, day = birthday.split("/")
-					year = int(month)
+					year = int(year)
 					month = int(month)
 					day = int(day)
 
@@ -1246,7 +1321,7 @@ async def birthday():
 					day = int(day)
 				elif length == 2:
 					year, month, day = birthday.split("/")
-					year = int(month)
+					year = int(year)
 					month = int(month)
 					day = int(day)
 
