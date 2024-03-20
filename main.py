@@ -549,7 +549,7 @@ async def on_message(message: discord.Message):
 	chara="キャラクター",
 	user="対象ユーザー"
 )
-async def delhistory(interaction: discord.Interaction, chara: str, user: discord.Member = None):
+async def delhistory(interaction: discord.Interaction, chara: str, user: discord.User = None):
 	if user == None:
 		user = interaction.user
 	else:
@@ -568,28 +568,28 @@ async def delhistory(interaction: discord.Interaction, chara: str, user: discord
 	else:
 		await interaction.response.send_message(f"エラー。なんかよくわからないキャラクターを選択してるよ。改造かなぁ？\n<@1208388325954560071>\n```\nキャラクター={chara}```")
 
-async def delete_tundere_history(interaction: discord.Interaction, user: discord.Member = None):
+async def delete_tundere_history(interaction: discord.Interaction, user: discord.User = None):
 	if chat_tundere_rooms[user.id] != None:
 		chat_tundere_rooms[user.id].history = None
 		await interaction.response.send_message("天海さき(ツンデレ)との会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度も天海さき(ツンデレ)と会話していないようです。", ephemeral=True)
 
-async def delete_inkya_history(interaction: discord.Interaction, user: discord.Member = None):
+async def delete_inkya_history(interaction: discord.Interaction, user: discord.User = None):
 	if chat_inkya_rooms[user.id] != None:
 		chat_inkya_rooms[user.id].history = None
 		await interaction.response.send_message("天海さき(陰キャ)との会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度も天海さき(ツンデレ)と会話していないようです。", ephemeral=True)
 
-async def delete_yajyuu_history(interaction: discord.Interaction, user: discord.Member = None):
+async def delete_yajyuu_history(interaction: discord.Interaction, user: discord.User = None):
 	if chat_yajyuu_rooms[user.id] != None:
 		chat_yajyuu_rooms[user.id].history = None
 		await interaction.response.send_message("野獣先輩との会話履歴を削除しました。")
 	else:
 		await interaction.response.send_message("あなたはまだ一度も野獣先輩と会話していないようです。", ephemeral=True)
 
-async def delete_parallel_1_history(interaction: discord.Interaction, user: discord.Member = None):
+async def delete_parallel_1_history(interaction: discord.Interaction, user: discord.User = None):
 	if chat_r18_rooms[user.id] != None:
 		chat_r18_rooms[user.id].history = None
 		await interaction.response.send_message("天海さき(パラレルⅠ)との会話履歴を削除しました。")
@@ -663,7 +663,7 @@ async def sell(interaction: discord.Interaction):
 	await interaction.followup.send(embed=embed)
 
 @tree.command(name="transfer", description="あなたが持っているsʜɪᴛsᴜᴢɪ ᴄᴏɪɴを他の人に譲渡します")
-async def sell(interaction: discord.Interaction, amount: int, to: discord.Member):
+async def sell(interaction: discord.Interaction, amount: int, to: discord.User):
 	await interaction.response.defer()
 	user = interaction.user
 	# テーブルからexpの値を取得
@@ -793,7 +793,7 @@ async def renzoku_gacha(interaction: discord.Interaction, count: Optional[int]):
 	await connection.close()
 
 @tree.command(name="rank", description="ユーザーのレベルと経験値を確認")
-async def rank(interaction: discord.Interaction, user: discord.Member = None):
+async def rank(interaction: discord.Interaction, user: discord.User = None):
 	await interaction.response.defer()
 	if user is None:
 		user = interaction.user
