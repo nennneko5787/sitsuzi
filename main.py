@@ -851,7 +851,9 @@ async def _eval(interaction: discord.Interaction, formura: str):
 @app_commands.describe(year="年", month="月")
 async def setbirthday(interaction: discord.Interaction, year: int, month: int):
 	await interaction.response.defer()
-	カレンダー = calendar.month(year, month)
+	jpcalendar = calendar.LocaleTextCalendar(locale='ja_jp')
+	jpcalendar.setfirstweekday(calendar.SUNDAY)
+	カレンダー = jpcalendar.month(year, month)
 	connection = await connect_to_database()
 	result = await connection.fetch("SELECT id, personal_birthday FROM member_data")
 	ant = []
