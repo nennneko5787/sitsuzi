@@ -876,7 +876,6 @@ async def setbirthday(interaction: discord.Interaction, year: int, month: int):
 			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} ({_.get('personal_birthday')})")
 
 	result = await connection.fetch("SELECT id, oshi1_birthday, oshi1_name FROM member_data")
-	ant = []
 	for _ in result:
 		if _.get('oshi1_birthday') is not None:
 			_length = _.get('oshi1_birthday').count("/")
@@ -898,7 +897,6 @@ async def setbirthday(interaction: discord.Interaction, year: int, month: int):
 			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} さんの推しである{_.get('oshi1_name')}さん ({_.get('oshi1_birthday')})")
 
 	result = await connection.fetch("SELECT id, oshi2_birthday, oshi2_name FROM member_data")
-	ant = []
 	for _ in result:
 		if _.get('oshi2_birthday') is not None:
 			_length = _.get('oshi2_birthday').count("/")
