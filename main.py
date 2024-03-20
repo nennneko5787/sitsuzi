@@ -886,7 +886,7 @@ async def setoshiname(interaction: discord.Interaction, oshi: str, name: str):
 		name
 	)
 	await connection.close()
-	await interaction.followup.send("推しの名前を設定しました。")
+	await interaction.followup.send(f"推しの名前を**{name}**に設定しました。")
 
 @tree.command(name="mcstart", description="Minecraftサーバーを起動します")
 async def mcstart(interaction: discord.Interaction):
