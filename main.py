@@ -853,27 +853,27 @@ async def setbirthday(interaction: discord.Interaction, year: int, month: int):
 	await interaction.response.defer()
 	カレンダー = calendar.month(year, month)
 	connection = await connect_to_database()
-	result = await connection.fetch("SELECT id, birthday FROM member_data")
+	result = await connection.fetch("SELECT id, personal_birthday FROM member_data")
 	ant = []
 	for _ in result:
-		if _.get('birthday') is not None:
-			_length = _.get('birthday').count("/")
+		if _.get('personal_birthday') is not None:
+			_length = _.get('personal_birthday').count("/")
 			_year = 0
 			_month = 0
 			_day = 0
 			if _length == 1:
-				_month, _day = _.get('birthday').split("/")
+				_month, _day = _.get('personal_birthday').split("/")
 				_month = int(_month)
 				_day = int(_day)
 			elif _length == 2:
-				_year, _month, _day = _.get('birthday').split("/")
+				_year, _month, _day = _.get('personal_birthday').split("/")
 				_year = int(_year)
 				_month = int(_month)
 				_day = int(_day)
 		else:
 			continue
 		if _month == month:
-			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} ({_.get('birthday')})")
+			ant.append(f"{client.get_guild(1208388325954560071).get_member(_.get('id')).mention} ({_.get('personal_birthday')})")
 
 	result = await connection.fetch("SELECT id, oshi1_birthday, oshi1_name FROM member_data")
 	ant = []
