@@ -849,11 +849,11 @@ async def _eval(interaction: discord.Interaction, formura: str):
 
 @tree.command(name="calendar", description="カレンダーを確認できます。誕生日も確認することができます。")
 @app_commands.describe(year="年", month="月")
-async def setbirthday(interaction: discord.Interaction, year: int, month: int):
+async def setbirthday(interaction: discord.Interaction, month: int, year: int = datetime.datetime.now().year):
 	await interaction.response.defer()
 	jpcalendar = calendar.LocaleTextCalendar(locale='ja_jp')
 	jpcalendar.setfirstweekday(calendar.SUNDAY)
-	カレンダー = jpcalendar.month(year, month)
+	カレンダー = jpcalendar.formatmonth(year, month)
 	connection = await connect_to_database()
 	result = await connection.fetch("SELECT id, personal_birthday FROM member_data")
 	ant = []
