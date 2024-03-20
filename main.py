@@ -220,7 +220,50 @@ async def on_member_update(before, after):
 			await after.remove_roles(client.get_guild(1208388325954560071).get_role(1208388351372169256))
 
 @client.event
-async def on_message(message):
+async def on_message(message: discord.Message):
+	if message.author.id == 850493201064132659:
+		if "上げました" in message.embeds[0].description:
+			embed = discord.Embed(
+				title=f"{message.interaction.user.name}さん、UPありがとうございます！",
+				description="サーバーがさらに成長しますわ！",
+				color=discord.Colour.blue()
+			)
+			now = datetime.datetime.now(ZoneInfo("Asia/Tokyo")) + datetime.timedelta(hours=1)
+			embed2 = discord.Embed(
+				title="UP通知を送信してもいいですか？",
+				description=f"UPされたみたいなので、<t:{int(now.timestamp())}:R>に通知しますね！",
+				color=discord.Colour.blue()
+			)
+			await message.channel.send(message.interaction.user.mention, embeds=[embed, embed2])
+			await asyncio.sleep(3600)
+			embed = discord.Embed(
+				title="UPする時間です！",
+				description="UPしましょう！\n</up:980136954169536525></up:980136954169536525></up:980136954169536525></up:980136954169536525></up:980136954169536525></up:980136954169536525></up:980136954169536525></up:980136954169536525></up:980136954169536525>",
+				color=discord.Colour.blue()
+			)
+			await message.channel.send("<@&1218851696441167872>", embed=embed)
+	if message.author.id == 903541413298450462:
+		if "成功しました" in message.embeds[0].description:
+			embed = discord.Embed(
+				title=f"{message.interaction.user.name}さん、UPありがとうございます！",
+				description="サーバーがさらに成長しますわ！",
+				color=discord.Colour.blue()
+			)
+			now = datetime.datetime.now(ZoneInfo("Asia/Tokyo")) + datetime.timedelta(hours=1)
+			embed2 = discord.Embed(
+				title="UP通知を送信してもいいですか？",
+				description=f"UPされたみたいなので、<t:{int(now.timestamp())}:R>に通知しますね！",
+				color=discord.Colour.blue()
+			)
+			await message.channel.send(message.interaction.user.mention, embeds=[embed, embed2])
+			await asyncio.sleep(3600)
+			embed = discord.Embed(
+				title="UPする時間です！",
+				description="UPしましょう！\n</up:935190259111706754></up:935190259111706754></up:935190259111706754></up:935190259111706754></up:935190259111706754></up:935190259111706754></up:935190259111706754></up:935190259111706754></up:935190259111706754>",
+				color=discord.Colour.blue()
+			)
+			await message.channel.send("<@&1218851696441167872>", embed=embed)
+
 	if message.author.bot == False:
 		try:
 			# テーブルからexpの値を取得
