@@ -851,7 +851,7 @@ async def _eval(interaction: discord.Interaction, formura: str):
 @app_commands.describe(year="年", month="月")
 async def setbirthday(interaction: discord.Interaction, month: int, year: int = datetime.datetime.now().year):
 	await interaction.response.defer()
-	jpcalendar = calendar.LocaleTextCalendar(locale='ja_jp')
+	jpcalendar = calendar.LocaleTextCalendar(locale='ja_jp.UTF-8')
 	jpcalendar.setfirstweekday(calendar.SUNDAY)
 	カレンダー = jpcalendar.formatmonth(year, month)
 	connection = await connect_to_database()
