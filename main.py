@@ -84,7 +84,7 @@ tree = app_commands.CommandTree(client)
 
 proxies = {
 	'http://': 'http://162.252.151.113:8282',
-	'https://': '193.122.98.1:3128'
+	'https://': 'https://193.122.98.1:3128'
 }
 
 twitter = Client('ja-JP', proxies=proxies, timeout=300)
