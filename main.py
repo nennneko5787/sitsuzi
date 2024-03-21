@@ -83,8 +83,8 @@ client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 
 proxies = {
-	'http://': 'http://212.42.116.161:8080',
-	'https://': 'http://65.109.152.88:8888'
+	'http://': 'http://162.252.151.113:8282',
+	'https://': '193.122.98.1:3128'
 }
 
 twitter = Client('ja-JP', proxies=proxies, timeout=300)
@@ -281,7 +281,7 @@ async def on_message(message: discord.Message):
 				coin = 0
 				nolevelUpNotifyFlag = False
 
-			exp += random.randint(1, 50)
+			exp += random.randint(1, 50) * ((1 + message.guild.premium_subscription_count) if message.author in message.guild.premium_subscribers else 1)
 			coin += 1
 			if exp >= 350 * level:
 				level += 1
@@ -318,8 +318,8 @@ async def on_message(message: discord.Message):
 
 			if last_rogubo_date != datetime.datetime.now(ZoneInfo("Asia/Tokyo")).strftime('%Y/%m/%d'):
 				try:
-					xp = random.randint(0, 350 * level)
-					c = random.randint(0, 200)
+					xp = random.randint(0, 350 * level) * ((1 + message.guild.premium_subscription_count) if message.author in message.guild.premium_subscribers else 1)
+					c = random.randint(0, 200) * ((1 + message.guild.premium_subscription_count) if message.author in message.guild.premium_subscribers else 1)
 					embed = discord.Embed(title="ログインボーナスを獲得しました！", description=f"経験値 + {xp}\nsʜɪᴛsᴜᴢɪ ᴄᴏɪɴ + {c}",color=discord.Color.purple())
 					await message.reply(embed=embed)
 					exp += xp
@@ -728,7 +728,7 @@ async def gacha(connection, user, message):
 
 	if coin >= 20:
 		try:
-			xp = np.random.randint(-350 * level, 350 * level)
+			xp = np.random.randint(-350 * level, 350 * level * ((1 + message.guild.premium_subscription_count) if message.author in message.guild.premium_subscribers else 1))
 			embed = discord.Embed(title="ガチャの結果", description=f"経験値 + {xp}",color=discord.Color.purple())
 			await message.reply(embed=embed)
 			exp += xp
