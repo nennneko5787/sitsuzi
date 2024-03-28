@@ -1303,7 +1303,7 @@ async def birthday():
 						pass
 
 			birthday = row.get("oshi2_birthday","0000/00/00")
-			oshi = row.get("oshi1_name",None)
+			oshi = row.get("oshi2_name",None)
 			if oshi is not None:
 				nm = f"の{oshi}さん"
 			else:
